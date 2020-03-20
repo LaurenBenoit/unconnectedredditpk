@@ -547,7 +547,7 @@ class LinkForm(forms.Form):#this controls the link edit form
 			else:
 				description = re.sub(r'\n\s*\n', '\n', description)# collapsing multiple new lines into 1
 				lines = description.split('\n')
-				if len(lines) > 10:
+				if len(lines) > 20:
 					raise forms.ValidationError('Itni zyada new lines nahi dalein!')
 				elif secret_key_from_form != secret_key_from_session:
 					raise forms.ValidationError('Sirf aik dafa button dabain')

@@ -81,8 +81,8 @@ def forgot_password(request, *args, **kwargs):
 	"""
 	if request.user.is_authenticated():
 		# already logged in
-    fp_log_firebase_user_verification_outcome('id_already_logged_in_firebase')
-    return redirect('home')
+		fp_log_firebase_user_verification_outcome('id_already_logged_in_firebase')
+		return redirect('home')
 	elif request.method == "POST":
 		form = ForgettersNicknameForm(data=request.POST, lang=None)
 		if form.is_valid():
@@ -120,8 +120,8 @@ def prelim_account_verification(request, *args, **kwargs):
 	"""
 	if request.user.is_authenticated():
 		# already logged in
-    fp_log_firebase_user_verification_outcome('id_already_logged_in_firebase')
-    return redirect('home')
+		fp_log_firebase_user_verification_outcome('id_already_logged_in_firebase')
+		return redirect('home')
 	elif request.method == "POST":
 		is_ajax = request.is_ajax()
 		if is_ajax:

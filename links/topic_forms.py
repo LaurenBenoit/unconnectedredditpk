@@ -159,7 +159,7 @@ class SubmitInTopicForm(forms.Form):
 			else:
 				description = re.sub(r'\n\s*\n', '\n', description)# collapsing multiple new lines into 1
 				lines = description.split('\n')
-				if len(lines) > 10:
+				if len(lines) > 20:
 					raise forms.ValidationError('Itni zyada new lines nahi dalein!')
 				elif repetition_found(section=section,section_id=section_id,user_id=user_id, target_text=description):
 					raise forms.ValidationError('Milti julti cheezain nahi likhein')

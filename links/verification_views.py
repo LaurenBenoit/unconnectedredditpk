@@ -311,8 +311,8 @@ def verify_user_mobile_unpaid(request):
 	"""
 	if is_mobile_verified(request.user.id): 
 		# not allowed to proceed
-    log_firebase_user_verification_outcome('id_already_verified_firebase')
-    return redirect("home")
+		log_firebase_user_verification_outcome('id_already_verified_firebase')
+		return redirect("home")
 	else:
 		if request.META.get('HTTP_X_IORG_FBS',False):
 			template_name = 'verification/user_mobile_verification_fbs.html'
