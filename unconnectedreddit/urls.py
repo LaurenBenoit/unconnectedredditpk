@@ -38,7 +38,7 @@ HistoryHelpView
 from links.redirection_views import redirect_to_content, main_navbar
 from links.number_verification import verify_user_number
 from links.voting_views import user_vote_history, user_old_vote_history
-from links.announcement_views import export_survey_results, corona_virus, benefits_of_data_mode#, survey
+from links.announcement_views import export_survey_results, corona_virus, benefits_of_data_mode, survey
 
 admin.autodiscover()
 
@@ -165,7 +165,7 @@ urlpatterns = patterns('',
 	url(r'^hell-ban/add/$', auth(hell_ban),name='hell_ban'),
 	url(r'^hell-ban/remove/$', auth(remove_hell_ban),name='remove_hell_ban'),
 	########################################## Survey Related ########################################
-	# url(r'^survey/answers/$', auth(survey),name='survey'),
+	url(r'^survey/answers/$', auth(survey),name='survey'),
 	url(r'^survey/export/$', auth(export_survey_results), name='export_survey_results'),
 	url(r'^corona-virus/$', corona_virus, name='corona_virus'),
 	url(r'^corona-virus/(?P<lang>[\w.@+-]+)/$', corona_virus, name='corona_virus'),

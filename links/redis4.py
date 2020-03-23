@@ -2137,7 +2137,7 @@ def log_superhuman_survey_answers(user_id, answers_dict, time_now):
 		return False
 	else:
 		# answering for the first time
-		answers = json.dumps(answers_dict)
+		answers = json.dumps(answers_dict)# turn answer dict into a json string
 		my_server.setex(answer_key,answers,TWO_WEEKS)
 		my_server.zadd(HXU_ANSWERERS,answer_key,time_now)
 		my_server.expire(HXU_ANSWERERS,TWO_WEEKS)

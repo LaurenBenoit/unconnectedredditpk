@@ -1,55 +1,16 @@
-{% extends "base/base_min.html" %}
+{% extends "base/base_noindex.html" %}
 {% block content %}
 <head><title>Survey | Damadam</title></head>
 
-<style type="text/css">.title{width: 100%; color: #FFF; letter-spacing: 2px; text-align: center; padding: 5px 0; font-weight: 300; display: block;}</style><header class="title bg cxl" >Damadam.pk</header>
-
-{% include "navbars/top_navbar.html" with username=user.username %}
-
-{% if not submitted and not skipped and not sure_about_skipping and not already_answered and not must_answer_all and not invalid_answers and not error_final_dec %}
-
-<h1 class="clb cxl lsp" style="text-align:center">The new <span class="sp" style="color:#4fb2e3">REPLY</span> option!</h1>
-
-<div class="bizcard clb" style="background-color:#FEFCFC;max-width:750px;width:97%;margin:0 auto;overflow: hidden;text-align:center;">
-
-
-  <button class="vt cxl sp mtl mbl" style="border:1px solid #4fb2e3;padding:4px 0;width:102px;color:#4fb2e3" name="dr_pl">REPLY</button>
-
-	<div class="cxl lsp" style="padding:0 10px 10px 10px;text-align:center">
-  		<span>Damadam pe aik new kisam ke 'reply' option aney wala hai</span>
-  	</div>
-
-  <div class="sp lsp clb" style="background:ivory;border-top:1px dashed darkgray;border-bottom:1px dotted white">
-    <div style="padding:0 12px">
-      <ul style="padding: 0;list-style-type: circle;padding-left:15px">
-        <li style="text-align:left" class="mbl">'Reply' button har jawab, tabsrey, post waghera pe show ho ga. Maslan:
-        	<div class="mts" style="text-align:center"><img src="{{ STATIC_URL }}img/reply1.png" width="290" height="53"></div>
-        </li>
-        <li style="text-align:left" class="mbl">Is button ko daba ke ap directly user ko reply de sakein ge. Maslan:
-        	<div class="mts" style="text-align:center"><img src="{{ STATIC_URL }}img/reply2.png" width="349" height="59"></div>
-        </li>
-        <li style="text-align:left" class="mbl">Post ke neechay tamam replies show hon ge. Lekin notification sirf ussi user ke matke mein jaiga jisko 'reply' dia gya ho</li>
-        <li style="text-align:left" class="mbl">Aik waqt mein sirf 1 user ko reply dia ja sakey ga. 2 users ko aik sath reply nahi ho ga</li>
-        <li style="text-align:left" class="mbl">Damadam mein tamam commenting sirf 'reply' button se ho gi</li>
-        <li style="text-align:left" class="mbl">Matke mein bhi sirf direct replies hi aien ge, aur kuch nahi ai ga</li>
-        <li style="text-align:left">'Reply' option jald Damadam pe dastyab ho ga ('Follow' option ke sath sath). Shukria!</li>
-      </ul>
-    </div>
-  </div>
-
-</div>
-
-{% endif %}
-
 <!--  -->
 
-<h1 class="clb cxl lsp nos" style="margin-top:0;padding-top:15px;text-align:center">'Reply' option pe feedback:</h1>
+<h1 class="clb cxl lsp nos" style="margin-top:0;padding-top:15px;text-align:center">Survey for you:</h1>
 
-<main class="mbl clb nos" style="display:block;border:3px solid #ececec;border-radius:12px;overflow:hidden;background:white;max-width:750px;width:97%;margin-right:auto;margin-left:auto">
+<main class="mbl clb nos" style="display:block;overflow:hidden;background:white;max-width:750px;margin-right:auto;margin-left:auto">
 
 {% if submitted %}
 
-	<div class="cxl lsp" style="padding:10px;text-align:center;background:ivory">Shukria! Apke jawab hamey 'reply' option ko behtar bananey mein madad dein ge</div>
+	<div class="cxl lsp" style="padding:10px;text-align:center;background:ivory">Shukria! Apke jawab hamey Damadam ko improve karney mein help karein ge</div>
 
 	<hr size=1 COLOR="#E6E6E6" style="margin:0">
 
@@ -77,7 +38,7 @@
 
 {% elif already_answered %}
 
-	{% if was_skipped %}<div class="cxl lsp" style="padding:10px;text-align:center;background:ivory">Ap feedback form ko skip kar chukey hain</div>{% else %}<div class="cxl lsp" style="padding:10px;text-align:center;background:ivory">Apka feedback jama karaya ja chuka hai. Shukria!</div>{% endif %}
+	{% if was_skipped %}<div class="cxl lsp" style="padding:10px;text-align:center;background:ivory">Ap survey ko skip kar chukey hain</div>{% else %}<div class="cxl lsp" style="padding:10px;text-align:center;background:ivory">Apke answers jama karaye ja chuke hain. Shukria!</div>{% endif %}
 
 	<hr size=1 COLOR="#E6E6E6" style="margin:0">
 
@@ -91,7 +52,7 @@
 
 {% elif sure_about_skipping %}
 
-	<div class="cxl lsp" style="padding:10px;text-align:center;background:ivory;border-bottom:1px solid #e9ebee">Kya feedback form ko hamesha ke liye <b>skip</b> kar dia jaye?</div>
+	<div class="cxl lsp" style="padding:10px;text-align:center;background:ivory;border-bottom:1px solid #e9ebee">Kya survey ko hamesha ke liye <b>skip</b> kar dia jaye?</div>
 
 	<form method="POST" class="mtl mbl" style="text-align:center" action="{% url 'survey' %}">
 	{% csrf_token %}
@@ -110,6 +71,9 @@
 {% elif invalid_answers %}
 	<div class="cr cxl" style="text-align:left">
 		Mandarja-zael mein ghalti hai:<br>
+		{% if errors.ans6 %}
+			●&nbsp;{{ errors.ans6 }}<br>
+		{% endif %}
 		{% if errors.ans1 %}
 			●&nbsp;{{ errors.ans1 }}<br>
 		{% endif %}
@@ -125,237 +89,542 @@
 		{% if errors.ans5 %}
 			●&nbsp;{{ errors.ans5 }}<br>
 		{% endif %}
-		{% if errors.ans6 %}
-			●&nbsp;{{ errors.ans6 }}<br>
-		{% endif %}
 		{% if errors.ans7 %}
 			●&nbsp;{{ errors.ans7 }}<br>
 		{% endif %}
 	</div>
 {% elif error_final_dec %}
-	<span class="cr cxl">Ye form sahi submit nahi ho saka. Dubara koshish karein</span>
+	<span class="cr cxl">Ye sahi submit nahi ho saka. Dubara koshish karein</span>
 {% else %}
-	Neechay 'reply' option ke barey mein feedback dein. Is se ham 'reply' option ko apkey liye aur behtar banain ge
+	Neechay apke barey mein chand sawal hain. Inke zariye ham Damadam mein improvements laien ge
 {% endif %}
 </div>
 
 <form method="POST" class="mbl" action="{% url 'survey' %}" style="padding:10px">
 {% csrf_token %}
-<div class="cxl lsp mbl"><b>1)</b> Apko khud 'reply' option ka kitna faida ho ga?</div>
-<div class="radbut cxl" style="margin: 0 auto;width: auto;text-align: left;display: table;">
-	{% if ans1 == '1' %}
-		<div class="mt">
-			<input type="radio" id="opt1" name="q1" value="1" style="vertical-align:middle" checked><label for="opt1">&nbsp;Mujhe buhut faida ho ga</label>
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt2" name="q1" value="2" style="vertical-align:middle"><label for="opt2">&nbsp;Mujhe thora sa faida ho ga</label>
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt3" name="q1" value="3" style="vertical-align:middle"><label for="opt3">&nbsp;Mujhe faida nahi ho ga</label>
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt4" name="q1" value="4" style="vertical-align:middle"><label for="opt4">&nbsp;Mujhe nuqsan ho ga</label>
-		</div>
-	{% elif ans1 == '2' %}
-		<div class="mt">
-			<input type="radio" id="opt1" name="q1" value="1" style="vertical-align:middle"><label for="opt1">&nbsp;Mujhe buhut faida ho ga</label>
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt2" name="q1" value="2" style="vertical-align:middle" checked><label for="opt2">&nbsp;Mujhe thora sa faida ho ga</label>
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt3" name="q1" value="3" style="vertical-align:middle"><label for="opt3">&nbsp;Mujhe faida nahi ho ga</label>
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt4" name="q1" value="4" style="vertical-align:middle"><label for="opt4">&nbsp;Mujhe nuqsan ho ga</label>
-		</div>
-	{% elif ans1 == '3' %}
-		<div class="mt">
-			<input type="radio" id="opt1" name="q1" value="1" style="vertical-align:middle"><label for="opt1">&nbsp;Mujhe buhut faida ho ga</label>
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt2" name="q1" value="2" style="vertical-align:middle"><label for="opt2">&nbsp;Mujhe thora sa faida ho ga</label>
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt3" name="q1" value="3" style="vertical-align:middle" checked><label for="opt3">&nbsp;Mujhe faida nahi ho ga</label>
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt4" name="q1" value="4" style="vertical-align:middle"><label for="opt4">&nbsp;Mujhe nuqsan ho ga</label>
-		</div>
-	{% elif ans1 == '4' %}
-		<div class="mt">
-			<input type="radio" id="opt1" name="q1" value="1" style="vertical-align:middle"><label for="opt1">&nbsp;Mujhe buhut faida ho ga</label>
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt2" name="q1" value="2" style="vertical-align:middle"><label for="opt2">&nbsp;Mujhe thora sa faida ho ga</label>
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt3" name="q1" value="3" style="vertical-align:middle"><label for="opt3">&nbsp;Mujhe faida nahi ho ga</label>
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt4" name="q1" value="4" style="vertical-align:middle" checked><label for="opt4">&nbsp;Mujhe nuqsan ho ga</label>
-		</div>
-	{% else %}
-		<div class="mt">
-			<input type="radio" id="opt1" name="q1" value="1" style="vertical-align:middle"><label for="opt1">&nbsp;Mujhe buhut faida ho ga</label>
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt2" name="q1" value="2" style="vertical-align:middle"><label for="opt2">&nbsp;Mujhe thora sa faida ho ga</label>
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt3" name="q1" value="3" style="vertical-align:middle"><label for="opt3">&nbsp;Mujhe faida nahi ho ga</label>
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt4" name="q1" value="4" style="vertical-align:middle"><label for="opt4">&nbsp;Mujhe nuqsan ho ga</label>
-		</div>
-	{% endif %}
-</div>
 
-<div style="border-top:1px solid #ececec;padding-top:15px" class="mtl cxl lsp"><b>2)</b> Ap ne uper jo jawab chunna, usko chunney ki wajah kya hai?</div>
-<textarea class="mts cxl sp" style="border:1px solid #a8dff0;width:100%;height:120px;padding:8px;box-sizing:border-box;border-radius:8px;background:snow" maxlength="1000" name="q2">{% if ans2 %}{{ ans2 }}{% endif %}</textarea>
-
-<div style="border-top:1px solid #ececec;padding-top:15px" class="mtl cxl lsp"><b>3)</b> Is 'reply' option mein koi kammi hai? Agr haan tou hum usko dur kesay kar saktey hain?</div>
-<textarea class="mts cxl sp" style="border:1px solid #a8dff0;width:100%;height:120px;padding:8px;box-sizing:border-box;border-radius:8px;background:snow" maxlength="1000" name="q3">{% if ans3 %}{{ ans3 }}{% endif %}</textarea>
-
-<div style="border-top:1px solid #ececec;padding-top:15px" class="mtl cxl lsp mbs"><b>4)</b> Ap Mard hein ya Aurat?</div> 
-<div class="radbut cxl" style="margin: 0 auto;width: auto;text-align: left;display: table;">
-	{% if ans4 == '1' %}
-		<div class="mt">
-			<input type="radio" id="opt5" name="q4" value="1" style="vertical-align:middle" checked><label for="opt5">&nbsp;Mard
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt6" name="q4" value="2" style="vertical-align:middle"><label for="opt6">&nbsp;Aurat
-		</div>
-	{% elif ans4 == '2' %}
-		<div class="mt">
-			<input type="radio" id="opt5" name="q4" value="1" style="vertical-align:middle"><label for="opt5">&nbsp;Mard
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt6" name="q4" value="2" style="vertical-align:middle" checked><label for="opt6">&nbsp;Aurat
-		</div>
-	{% else %}
-		<div class="mt">
-			<input type="radio" id="opt5" name="q4" value="1" style="vertical-align:middle"><label for="opt5">&nbsp;Mard
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt6" name="q4" value="2" style="vertical-align:middle"><label for="opt6">&nbsp;Aurat
-		</div>
-	{% endif %}
-</div>
-
-<div style="border-top:1px solid #ececec;padding-top:15px" class="mtl cxl lsp mbs"><b>5)</b> Apki age kitni hai?</div>
-<div class="radbut cxl" style="margin: 0 auto;width: auto;text-align: left;display: table;">
-	{% if ans5 == '1' %}
-		<div class="mt">
-			<input type="radio" id="opt7" name="q5" value="1" style="vertical-align:middle" checked><label for="opt7">&nbsp;12-17
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt8" name="q5" value="2" style="vertical-align:middle"><label for="opt8">&nbsp;18-22
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt9" name="q5" value="3" style="vertical-align:middle"><label for="opt9">&nbsp;22 se zyada
-		</div>
-	{% elif ans5 == '2' %}
-		<div class="mt">
-			<input type="radio" id="opt7" name="q5" value="1" style="vertical-align:middle"><label for="opt7">&nbsp;12-17
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt8" name="q5" value="2" style="vertical-align:middle" checked><label for="opt8">&nbsp;18-22
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt9" name="q5" value="3" style="vertical-align:middle"><label for="opt9">&nbsp;22 se zyada
-		</div>
-	{% elif ans5 == '3' %}
-		<div class="mt">
-			<input type="radio" id="opt7" name="q5" value="1" style="vertical-align:middle"><label for="opt7">&nbsp;12-17
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt8" name="q5" value="2" style="vertical-align:middle"><label for="opt8">&nbsp;18-22
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt9" name="q5" value="3" style="vertical-align:middle" checked><label for="opt9">&nbsp;22 se zyada
-		</div>
-	{% else %}
-		<div class="mt">
-			<input type="radio" id="opt7" name="q5" value="1" style="vertical-align:middle"><label for="opt7">&nbsp;12-17
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt8" name="q5" value="2" style="vertical-align:middle"><label for="opt8">&nbsp;18-22
-		</div>
-		<div class="mtl">
-			<input type="radio" id="opt9" name="q5" value="3" style="vertical-align:middle"><label for="opt9">&nbsp;22 se zyada
-		</div>
-	{% endif %}
-</div>
-
-
-<div style="border-top:1px solid #ececec;padding-top:15px" class="mtl cxl lsp mbs"><b>6)</b> Apki education kitni hai?</div>
+<div class="cxl lsp mbl"><b>1)</b> Ap kitni kasrat se internet pe videos dekhte hain?</div>
 <div class="radbut cxl" style="margin: 0 auto;width: auto;text-align: left;display: table;">
 	{% if ans6 == '1' %}
 		<div class="mt">
-			<input type="radio" id="opt10" name="q6" value="1" style="vertical-align:middle" checked><label for="opt10">&nbsp;School
+			<input type="radio" id="opt27" name="q6" value="1" style="vertical-align:middle" checked><label for="opt27">&nbsp;Takreeban Rozaana
 		</div>
 		<div class="mtl">
-			<input type="radio" id="opt11" name="q6" value="2" style="vertical-align:middle"><label for="opt11">&nbsp;College
+			<input type="radio" id="opt28" name="q6" value="2" style="vertical-align:middle"><label for="opt28">&nbsp;Har 2-3 days baad 
 		</div>
 		<div class="mtl">
-			<input type="radio" id="opt12" name="q6" value="3" style="vertical-align:middle"><label for="opt12">&nbsp;University
+			<input type="radio" id="opt29" name="q6" value="3" style="vertical-align:middle"><label for="opt29">&nbsp;Har 1 week baad
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt30" name="q6" value="4" style="vertical-align:middle"><label for="opt30">&nbsp;Buhut kamm
 		</div>
 	{% elif ans6 == '2' %}
 		<div class="mt">
-			<input type="radio" id="opt10" name="q6" value="1" style="vertical-align:middle"><label for="opt10">&nbsp;School
+			<input type="radio" id="opt27" name="q6" value="1" style="vertical-align:middle"><label for="opt27">&nbsp;Takreeban Rozaana
 		</div>
 		<div class="mtl">
-			<input type="radio" id="opt11" name="q6" value="2" style="vertical-align:middle" checked><label for="opt11">&nbsp;College
+			<input type="radio" id="opt28" name="q6" value="2" style="vertical-align:middle" checked><label for="opt28">&nbsp;Har 2-3 days baad 
 		</div>
 		<div class="mtl">
-			<input type="radio" id="opt12" name="q6" value="3" style="vertical-align:middle"><label for="opt12">&nbsp;University
+			<input type="radio" id="opt29" name="q6" value="3" style="vertical-align:middle"><label for="opt29">&nbsp;Har 1 week baad
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt30" name="q6" value="4" style="vertical-align:middle"><label for="opt30">&nbsp;Buhut kamm
 		</div>
 	{% elif ans6 == '3' %}
 		<div class="mt">
-			<input type="radio" id="opt10" name="q6" value="1" style="vertical-align:middle"><label for="opt10">&nbsp;School
+			<input type="radio" id="opt27" name="q6" value="1" style="vertical-align:middle"><label for="opt27">&nbsp;Takreeban Rozaana
 		</div>
 		<div class="mtl">
-			<input type="radio" id="opt11" name="q6" value="2" style="vertical-align:middle"><label for="opt11">&nbsp;College
+			<input type="radio" id="opt28" name="q6" value="2" style="vertical-align:middle"><label for="opt28">&nbsp;Har 2-3 days baad 
 		</div>
 		<div class="mtl">
-			<input type="radio" id="opt12" name="q6" value="3" style="vertical-align:middle" checked><label for="opt12">&nbsp;University
+			<input type="radio" id="opt29" name="q6" value="3" style="vertical-align:middle" checked><label for="opt29">&nbsp;Har 1 week baad
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt30" name="q6" value="4" style="vertical-align:middle"><label for="opt30">&nbsp;Buhut kamm
+		</div>
+	{% elif ans6 == '4' %}
+		<div class="mt">
+			<input type="radio" id="opt27" name="q6" value="1" style="vertical-align:middle"><label for="opt27">&nbsp;Takreeban Rozaana
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt28" name="q6" value="2" style="vertical-align:middle"><label for="opt28">&nbsp;Har 2-3 days baad 
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt29" name="q6" value="3" style="vertical-align:middle"><label for="opt29">&nbsp;Har 1 week baad
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt30" name="q6" value="4" style="vertical-align:middle" checked><label for="opt30">&nbsp;Buhut kamm
 		</div>
 	{% else %}
 		<div class="mt">
-			<input type="radio" id="opt10" name="q6" value="1" style="vertical-align:middle"><label for="opt10">&nbsp;School
+			<input type="radio" id="opt27" name="q6" value="1" style="vertical-align:middle"><label for="opt27">&nbsp;Takreeban Rozaana
 		</div>
 		<div class="mtl">
-			<input type="radio" id="opt11" name="q6" value="2" style="vertical-align:middle"><label for="opt11">&nbsp;College
+			<input type="radio" id="opt28" name="q6" value="2" style="vertical-align:middle"><label for="opt28">&nbsp;Har 2-3 days baad 
 		</div>
 		<div class="mtl">
-			<input type="radio" id="opt12" name="q6" value="3" style="vertical-align:middle"><label for="opt12">&nbsp;University
+			<input type="radio" id="opt29" name="q6" value="3" style="vertical-align:middle"><label for="opt29">&nbsp;Har 1 week baad
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt30" name="q6" value="4" style="vertical-align:middle"><label for="opt30">&nbsp;Buhut kamm
 		</div>
 	{% endif %}
 </div>
 
-<div style="border-top:1px solid #ececec;padding-top:15px" class="mtl cxl lsp mbs"><b>7)</b> Kya ap abhi bhi student hain?</div>
+<div style="border-top:1px solid #ececec;padding-top:15px" class="mtl cxl lsp mbs"><b>2)</b> Ap aisi videos dekhte hain jin mein log apna talent dikhate hon?</div>
 <div class="radbut cxl" style="margin: 0 auto;width: auto;text-align: left;display: table;">
-	{% if ans7 == '1' %}
+	{% if ans1 == '1' %}
 		<div class="mt">
-			<input type="radio" id="opt13" name="q7" value="1" style="vertical-align:middle" checked><label for="opt13">&nbsp;Haan
+			<input type="radio" id="opt0" name="q1" value="1" style="vertical-align:middle" checked><label for="opt0">&nbsp;Haan</label>
 		</div>
 		<div class="mtl">
-			<input type="radio" id="opt14" name="q7" value="2" style="vertical-align:middle"><label for="opt14">&nbsp;Nahi
+			<input type="radio" id="opt1" name="q1" value="2" style="vertical-align:middle"><label for="opt1">&nbsp;Nahi</label>
 		</div>
-	{% elif ans7 == '2' %}
+	{% elif ans1 == '2' %}
 		<div class="mt">
-			<input type="radio" id="opt13" name="q7" value="1" style="vertical-align:middle"><label for="opt13">&nbsp;Haan
+			<input type="radio" id="opt0" name="q1" value="1" style="vertical-align:middle"><label for="opt0">&nbsp;Haan</label>
 		</div>
 		<div class="mtl">
-			<input type="radio" id="opt14" name="q7" value="2" style="vertical-align:middle" checked><label for="opt14">&nbsp;Nahi
+			<input type="radio" id="opt1" name="q1" value="2" style="vertical-align:middle" checked><label for="opt1">&nbsp;Nahi</label>
 		</div>
 	{% else %}
 		<div class="mt">
-			<input type="radio" id="opt13" name="q7" value="1" style="vertical-align:middle"><label for="opt13">&nbsp;Haan
+			<input type="radio" id="opt0" name="q1" value="1" style="vertical-align:middle"><label for="opt0">&nbsp;Haan</label>
 		</div>
 		<div class="mtl">
-			<input type="radio" id="opt14" name="q7" value="2" style="vertical-align:middle"><label for="opt14">&nbsp;Nahi
+			<input type="radio" id="opt1" name="q1" value="2" style="vertical-align:middle"><label for="opt1">&nbsp;Nahi</label>
+		</div>
+	{% endif %}
+</div>
+
+<div style="border-top:1px solid #ececec;padding-top:15px" class="mtl cxl lsp mbs"><b>3)</b> Apko kesi talent videos pasand hain?</div> 
+<div class="radbut cxl" style="margin: 0 auto;width: auto;text-align: left;display: table;">
+
+		<div class="mt">
+			{% if ans2.0 %}<input type="checkbox" id="opt2" name="q2" value="1" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt2" name="q2" value="1" style="vertical-align:middle">{% endif %}<label for="opt2">&nbsp;Koi bhi nahi</label>
+		</div>
+		<div class="mtl">
+			{% if ans2.1 %}<input type="checkbox" id="opt3" name="q2" value="2" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt3" name="q2" value="2" style="vertical-align:middle">{% endif %}<label for="opt3">&nbsp;Comedy</label>
+		</div>
+		<div class="mtl">
+			{% if ans2.2 %}<input type="checkbox" id="opt4" name="q2" value="3" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt4" name="q2" value="3" style="vertical-align:middle">{% endif %}<label for="opt4">&nbsp;Singing</label>
+		</div>
+		<div class="mtl">
+			{% if ans2.3 %}<input type="checkbox" id="opt5" name="q2" value="4" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt5" name="q2" value="4" style="vertical-align:middle">{% endif %}<label for="opt5">&nbsp;Dancing</label>
+		</div>
+		<div class="mtl">
+			{% if ans2.4 %}<input type="checkbox" id="opt6" name="q2" value="5" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt6" name="q2" value="5" style="vertical-align:middle">{% endif %}<label for="opt6">&nbsp;Physical Stunts</label>
+		</div>
+		<div class="mtl">
+			{% if ans2.5 %}<input type="checkbox" id="opt7" name="q2" value="6" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt7" name="q2" value="6" style="vertical-align:middle">{% endif %}<label for="opt7">&nbsp;Magic Tricks</label>
+		</div>
+		<div class="mtl">
+			{% if ans2.6 %}<input type="checkbox" id="opt8" name="q2" value="7" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt8" name="q2" value="7" style="vertical-align:middle">{% endif %}<label for="opt8">&nbsp;Pranks</label>
+		</div>
+		<div class="mtl">
+			{% if ans2.7 %}<input type="checkbox" id="opt9" name="q2" value="8" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt9" name="q2" value="8" style="vertical-align:middle">{% endif %}<label for="opt9">&nbsp;Parody</label>
+		</div>
+		<div class="mtl">
+			{% if ans2.8 %}<input type="checkbox" id="opt10" name="q2" value="9" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt10" name="q2" value="9" style="vertical-align:middle">{% endif %}<label for="opt10">&nbsp;Roasting</label>
+		</div>
+		<div class="mtl fx fxjsfs fxaicn">
+			<label for="opt11">Other&nbsp;</label>
+			{% if ans2b %}<input type="text" id="opt11" name="q2b" value="{{ ans2b }}" class="sp cm" style="vertical-align:middle;height:28px;border:1px solid #a5a5a5;border-radius:6px;background:#fbfbfb;padding-left:4px;max-width:66%">{% else %}<input type="text" id="opt11" name="q2b" value="" class="sp cm" style="vertical-align:middle;height:28px;border:1px solid #a5a5a5;border-radius:6px;background:#fbfbfb;padding-left:4px;max-width:66%">{% endif %}
+		</div>
+	
+</div>
+
+<div style="border-top:1px solid #ececec;padding-top:15px" class="mtl cxl lsp mbs"><b>4)</b> Ap khud kis terah ki talent videos banaty hain?</div> 
+<div class="radbut cxl" style="margin: 0 auto;width: auto;text-align: left;display: table;">
+
+		<div class="mt">
+			{% if ans3.0 %}<input type="checkbox" id="opt12" name="q3" value="1" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt12" name="q3" value="1" style="vertical-align:middle">{% endif %}<label for="opt12">&nbsp;Mein nahi banata</label>
+		</div>
+		<div class="mtl">
+			{% if ans3.1 %}<input type="checkbox" id="opt13" name="q3" value="2" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt13" name="q3" value="2" style="vertical-align:middle">{% endif %}<label for="opt13">&nbsp;Comedy</label>
+		</div>
+		<div class="mtl">
+			{% if ans3.2 %}<input type="checkbox" id="opt14" name="q3" value="3" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt14" name="q3" value="3" style="vertical-align:middle">{% endif %}<label for="opt14">&nbsp;Singing</label>
+		</div>
+		<div class="mtl">
+			{% if ans3.3 %}<input type="checkbox" id="opt15" name="q3" value="4" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt15" name="q3" value="4" style="vertical-align:middle">{% endif %}<label for="opt15">&nbsp;Dancing</label>
+		</div>
+		<div class="mtl">
+			{% if ans3.4 %}<input type="checkbox" id="opt16" name="q3" value="5" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt16" name="q3" value="5" style="vertical-align:middle">{% endif %}<label for="opt16">&nbsp;Physical Stunts</label>
+		</div>
+		<div class="mtl">
+			{% if ans3.5 %}<input type="checkbox" id="opt17" name="q3" value="6" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt17" name="q3" value="6" style="vertical-align:middle">{% endif %}<label for="opt17">&nbsp;Magic Tricks</label>
+		</div>
+		<div class="mtl">
+			{% if ans3.6 %}<input type="checkbox" id="opt18" name="q3" value="7" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt18" name="q3" value="7" style="vertical-align:middle">{% endif %}<label for="opt18">&nbsp;Pranks</label>
+		</div>
+		<div class="mtl">
+			{% if ans3.7 %}<input type="checkbox" id="opt19" name="q3" value="8" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt19" name="q3" value="8" style="vertical-align:middle">{% endif %}<label for="opt19">&nbsp;Parody</label>
+		</div>
+		<div class="mtl">
+			{% if ans3.8 %}<input type="checkbox" id="opt20" name="q3" value="9" style="vertical-align:middle" checked>{% else %}<input type="checkbox" id="opt20" name="q3" value="9" style="vertical-align:middle">{% endif %}<label for="opt20">&nbsp;Roasting</label>
+		</div>
+		<div class="mtl fx fxjsfs fxaicn">
+			<label for="opt21">Other&nbsp;</label>
+			{% if ans3b %}<input type="text" id="opt21" name="q3b" value="{{ ans3b }}" class="sp cm" style="vertical-align:middle;height:28px;border:1px solid #a5a5a5;border-radius:6px;background:#fbfbfb;padding-left:4px;max-width:66%">{% else %}<input type="text" id="opt21" name="q3b" value="" class="sp cm" style="vertical-align:middle;height:28px;border:1px solid #a5a5a5;border-radius:6px;background:#fbfbfb;padding-left:4px;max-width:66%">{% endif %}
+		</div>
+	
+</div>
+
+<div style="border-top:1px solid #ececec;padding-top:15px" class="mtl cxl lsp mbs"><b>5)</b> Ap Male hein ya Female?</div> 
+<div class="radbut cxl" style="margin: 0 auto;width: auto;text-align: left;display: table;">
+	{% if ans4 == '1' %}
+		<div class="mt">
+			<input type="radio" id="opt22" name="q4" value="1" style="vertical-align:middle" checked><label for="opt22">&nbsp;Male
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt23" name="q4" value="2" style="vertical-align:middle"><label for="opt23">&nbsp;Female
+		</div>
+	{% elif ans4 == '2' %}
+		<div class="mt">
+			<input type="radio" id="opt22" name="q4" value="1" style="vertical-align:middle"><label for="opt22">&nbsp;Male
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt23" name="q4" value="2" style="vertical-align:middle" checked><label for="opt23">&nbsp;Female
+		</div>
+	{% else %}
+		<div class="mt">
+			<input type="radio" id="opt22" name="q4" value="1" style="vertical-align:middle"><label for="opt22">&nbsp;Male
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt23" name="q4" value="2" style="vertical-align:middle"><label for="opt23">&nbsp;Female
+		</div>
+	{% endif %}
+</div>
+
+<div style="border-top:1px solid #ececec;padding-top:15px" class="mtl cxl lsp mbs"><b>6)</b> Apki age kitni hai?</div>
+<div class="radbut cxl" style="margin: 0 auto;width: auto;text-align: left;display: table;">
+	{% if ans5 == '1' %}
+		<div class="mt">
+			<input type="radio" id="opt24" name="q5" value="1" style="vertical-align:middle" checked><label for="opt24">&nbsp;12-17
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt25" name="q5" value="2" style="vertical-align:middle"><label for="opt25">&nbsp;18-22
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt26" name="q5" value="3" style="vertical-align:middle"><label for="opt26">&nbsp;22 se zyada
+		</div>
+	{% elif ans5 == '2' %}
+		<div class="mt">
+			<input type="radio" id="opt24" name="q5" value="1" style="vertical-align:middle"><label for="opt24">&nbsp;12-17
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt25" name="q5" value="2" style="vertical-align:middle" checked><label for="opt25">&nbsp;18-22
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt26" name="q5" value="3" style="vertical-align:middle"><label for="opt26">&nbsp;22 se zyada
+		</div>
+	{% elif ans5 == '3' %}
+		<div class="mt">
+			<input type="radio" id="opt24" name="q5" value="1" style="vertical-align:middle"><label for="opt24">&nbsp;12-17
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt25" name="q5" value="2" style="vertical-align:middle"><label for="opt25">&nbsp;18-22
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt26" name="q5" value="3" style="vertical-align:middle" checked><label for="opt26">&nbsp;22 se zyada
+		</div>
+	{% else %}
+		<div class="mt">
+			<input type="radio" id="opt24" name="q5" value="1" style="vertical-align:middle"><label for="opt24">&nbsp;12-17
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt25" name="q5" value="2" style="vertical-align:middle"><label for="opt25">&nbsp;18-22
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt26" name="q5" value="3" style="vertical-align:middle"><label for="opt26">&nbsp;22 se zyada
+		</div>
+	{% endif %}
+</div>
+
+<div style="border-top:1px solid #ececec;padding-top:15px" class="mtl cxl lsp mbs"><b>7)</b> Ap videos ke liye in mein se kaunsi app sab se zyada use kartey hain?</div>
+<div class="radbut cxl" style="margin: 0 auto;width: auto;text-align: left;display: table;">
+	{% if ans7 == '1' %}
+		<div class="mt">
+			<input type="radio" id="opt31" name="q7" value="1" style="vertical-align:middle" checked><label for="opt31">&nbsp;Youtube
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt32" name="q7" value="2" style="vertical-align:middle"><label for="opt32">&nbsp;TikTok
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt33" name="q7" value="3" style="vertical-align:middle"><label for="opt33">&nbsp;Facebook
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt34" name="q7" value="4" style="vertical-align:middle"><label for="opt34">&nbsp;Likee
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt35" name="q7" value="5" style="vertical-align:middle"><label for="opt35">&nbsp;Helo
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt36" name="q7" value="6" style="vertical-align:middle"><label for="opt36">&nbsp;Kwai
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt37" name="q7" value="7" style="vertical-align:middle"><label for="opt37">&nbsp;VidMate
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt38" name="q7" value="8" style="vertical-align:middle"><label for="opt38">&nbsp;Instagram
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt39" name="q7" value="9" style="vertical-align:middle"><label for="opt39">&nbsp;Koi bhi nahi
+		</div>
+	{% elif ans7 == '2' %}
+		<div class="mt">
+			<input type="radio" id="opt31" name="q7" value="1" style="vertical-align:middle"><label for="opt31">&nbsp;Youtube
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt32" name="q7" value="2" style="vertical-align:middle" checked><label for="opt32">&nbsp;TikTok
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt33" name="q7" value="3" style="vertical-align:middle"><label for="opt33">&nbsp;Facebook
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt34" name="q7" value="4" style="vertical-align:middle"><label for="opt34">&nbsp;Likee
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt35" name="q7" value="5" style="vertical-align:middle"><label for="opt35">&nbsp;Helo
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt36" name="q7" value="6" style="vertical-align:middle"><label for="opt36">&nbsp;Kwai
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt37" name="q7" value="7" style="vertical-align:middle"><label for="opt37">&nbsp;VidMate
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt38" name="q7" value="8" style="vertical-align:middle"><label for="opt38">&nbsp;Instagram
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt39" name="q7" value="9" style="vertical-align:middle"><label for="opt39">&nbsp;Koi bhi nahi
+		</div>
+	{% elif ans7 == '3' %}
+		<div class="mt">
+			<input type="radio" id="opt31" name="q7" value="1" style="vertical-align:middle"><label for="opt31">&nbsp;Youtube
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt32" name="q7" value="2" style="vertical-align:middle"><label for="opt32">&nbsp;TikTok
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt33" name="q7" value="3" style="vertical-align:middle" checked><label for="opt33">&nbsp;Facebook
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt34" name="q7" value="4" style="vertical-align:middle"><label for="opt34">&nbsp;Likee
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt35" name="q7" value="5" style="vertical-align:middle"><label for="opt35">&nbsp;Helo
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt36" name="q7" value="6" style="vertical-align:middle"><label for="opt36">&nbsp;Kwai
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt37" name="q7" value="7" style="vertical-align:middle"><label for="opt37">&nbsp;VidMate
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt38" name="q7" value="8" style="vertical-align:middle"><label for="opt38">&nbsp;Instagram
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt39" name="q7" value="9" style="vertical-align:middle"><label for="opt39">&nbsp;Koi bhi nahi
+		</div>
+	{% elif ans7 == '4' %}
+		<div class="mt">
+			<input type="radio" id="opt31" name="q7" value="1" style="vertical-align:middle"><label for="opt31">&nbsp;Youtube
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt32" name="q7" value="2" style="vertical-align:middle"><label for="opt32">&nbsp;TikTok
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt33" name="q7" value="3" style="vertical-align:middle"><label for="opt33">&nbsp;Facebook
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt34" name="q7" value="4" style="vertical-align:middle" checked><label for="opt34">&nbsp;Likee
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt35" name="q7" value="5" style="vertical-align:middle"><label for="opt35">&nbsp;Helo
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt36" name="q7" value="6" style="vertical-align:middle"><label for="opt36">&nbsp;Kwai
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt37" name="q7" value="7" style="vertical-align:middle"><label for="opt37">&nbsp;VidMate
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt38" name="q7" value="8" style="vertical-align:middle"><label for="opt38">&nbsp;Instagram
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt39" name="q7" value="9" style="vertical-align:middle"><label for="opt39">&nbsp;Koi bhi nahi
+		</div>
+	{% elif ans7 == '5' %}
+		<div class="mt">
+			<input type="radio" id="opt31" name="q7" value="1" style="vertical-align:middle"><label for="opt31">&nbsp;Youtube
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt32" name="q7" value="2" style="vertical-align:middle"><label for="opt32">&nbsp;TikTok
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt33" name="q7" value="3" style="vertical-align:middle"><label for="opt33">&nbsp;Facebook
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt34" name="q7" value="4" style="vertical-align:middle"><label for="opt34">&nbsp;Likee
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt35" name="q7" value="5" style="vertical-align:middle" checked><label for="opt35">&nbsp;Helo
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt36" name="q7" value="6" style="vertical-align:middle"><label for="opt36">&nbsp;Kwai
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt37" name="q7" value="7" style="vertical-align:middle"><label for="opt37">&nbsp;VidMate
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt38" name="q7" value="8" style="vertical-align:middle"><label for="opt38">&nbsp;Instagram
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt39" name="q7" value="9" style="vertical-align:middle"><label for="opt39">&nbsp;Koi bhi nahi
+		</div>
+	{% elif ans7 == '6' %}
+		<div class="mt">
+			<input type="radio" id="opt31" name="q7" value="1" style="vertical-align:middle"><label for="opt31">&nbsp;Youtube
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt32" name="q7" value="2" style="vertical-align:middle"><label for="opt32">&nbsp;TikTok
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt33" name="q7" value="3" style="vertical-align:middle"><label for="opt33">&nbsp;Facebook
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt34" name="q7" value="4" style="vertical-align:middle"><label for="opt34">&nbsp;Likee
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt35" name="q7" value="5" style="vertical-align:middle"><label for="opt35">&nbsp;Helo
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt36" name="q7" value="6" style="vertical-align:middle" checked><label for="opt36">&nbsp;Kwai
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt37" name="q7" value="7" style="vertical-align:middle"><label for="opt37">&nbsp;VidMate
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt38" name="q7" value="8" style="vertical-align:middle"><label for="opt38">&nbsp;Instagram
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt39" name="q7" value="9" style="vertical-align:middle"><label for="opt39">&nbsp;Koi bhi nahi
+		</div>
+	{% elif ans7 == '7' %}
+		<div class="mt">
+			<input type="radio" id="opt31" name="q7" value="1" style="vertical-align:middle"><label for="opt31">&nbsp;Youtube
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt32" name="q7" value="2" style="vertical-align:middle"><label for="opt32">&nbsp;TikTok
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt33" name="q7" value="3" style="vertical-align:middle"><label for="opt33">&nbsp;Facebook
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt34" name="q7" value="4" style="vertical-align:middle"><label for="opt34">&nbsp;Likee
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt35" name="q7" value="5" style="vertical-align:middle"><label for="opt35">&nbsp;Helo
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt36" name="q7" value="6" style="vertical-align:middle"><label for="opt36">&nbsp;Kwai
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt37" name="q7" value="7" style="vertical-align:middle" checked><label for="opt37">&nbsp;VidMate
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt38" name="q7" value="8" style="vertical-align:middle"><label for="opt38">&nbsp;Instagram
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt39" name="q7" value="9" style="vertical-align:middle"><label for="opt39">&nbsp;Koi bhi nahi
+		</div>
+	{% elif ans7 == '8' %}
+		<div class="mt">
+			<input type="radio" id="opt31" name="q7" value="1" style="vertical-align:middle"><label for="opt31">&nbsp;Youtube
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt32" name="q7" value="2" style="vertical-align:middle"><label for="opt32">&nbsp;TikTok
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt33" name="q7" value="3" style="vertical-align:middle"><label for="opt33">&nbsp;Facebook
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt34" name="q7" value="4" style="vertical-align:middle"><label for="opt34">&nbsp;Likee
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt35" name="q7" value="5" style="vertical-align:middle"><label for="opt35">&nbsp;Helo
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt36" name="q7" value="6" style="vertical-align:middle"><label for="opt36">&nbsp;Kwai
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt37" name="q7" value="7" style="vertical-align:middle"><label for="opt37">&nbsp;VidMate
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt38" name="q7" value="8" style="vertical-align:middle" checked><label for="opt38">&nbsp;Instagram
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt39" name="q7" value="9" style="vertical-align:middle"><label for="opt39">&nbsp;Koi bhi nahi
+		</div>
+	{% elif ans7 == '9' %}
+		<div class="mt">
+			<input type="radio" id="opt31" name="q7" value="1" style="vertical-align:middle"><label for="opt31">&nbsp;Youtube
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt32" name="q7" value="2" style="vertical-align:middle"><label for="opt32">&nbsp;TikTok
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt33" name="q7" value="3" style="vertical-align:middle"><label for="opt33">&nbsp;Facebook
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt34" name="q7" value="4" style="vertical-align:middle"><label for="opt34">&nbsp;Likee
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt35" name="q7" value="5" style="vertical-align:middle"><label for="opt35">&nbsp;Helo
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt36" name="q7" value="6" style="vertical-align:middle"><label for="opt36">&nbsp;Kwai
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt37" name="q7" value="7" style="vertical-align:middle"><label for="opt37">&nbsp;VidMate
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt38" name="q7" value="8" style="vertical-align:middle"><label for="opt38">&nbsp;Instagram
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt39" name="q7" value="9" style="vertical-align:middle" checked><label for="opt39">&nbsp;Koi bhi nahi
+		</div>
+	{% else %}
+		<div class="mt">
+			<input type="radio" id="opt31" name="q7" value="1" style="vertical-align:middle"><label for="opt31">&nbsp;Youtube
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt32" name="q7" value="2" style="vertical-align:middle"><label for="opt32">&nbsp;TikTok
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt33" name="q7" value="3" style="vertical-align:middle"><label for="opt33">&nbsp;Facebook
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt34" name="q7" value="4" style="vertical-align:middle"><label for="opt34">&nbsp;Likee
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt35" name="q7" value="5" style="vertical-align:middle"><label for="opt35">&nbsp;Helo
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt36" name="q7" value="6" style="vertical-align:middle"><label for="opt36">&nbsp;Kwai
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt37" name="q7" value="7" style="vertical-align:middle"><label for="opt37">&nbsp;VidMate
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt38" name="q7" value="8" style="vertical-align:middle"><label for="opt38">&nbsp;Instagram
+		</div>
+		<div class="mtl">
+			<input type="radio" id="opt39" name="q7" value="9" style="vertical-align:middle"><label for="opt39">&nbsp;Koi bhi nahi
 		</div>
 	{% endif %}
 </div>

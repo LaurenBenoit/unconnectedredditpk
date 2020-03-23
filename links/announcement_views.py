@@ -11,6 +11,7 @@ from forms import strip_zero_width_characters
 from redis4 import log_superhuman_survey_answers, has_already_answered_superhuman_survey, retrieve_uname, retrieve_survey_records
 from redis7 import in_defenders, get_num_topics
 from redis3 import get_world_age, exact_date
+from redis2 import get_all_follower_count
 from utilities import convert_to_epoch
 from redis6 import get_num_groups
 from redis5 import get_num_grps
@@ -60,16 +61,120 @@ def export_survey_results(request):
 			filename = 'survey_data.csv'
 			with open(filename,'wb') as f:
 				wtr = csv.writer(f)
-				columns = ['username','skipped','joining time','submission time','on fbs', \
-				'world age','num pub mehfils','num prv mehfils', 'num 1on1s','num fans','num topics',\
-				'last_txt_post_time','last_pht_post_time','ans1','ans2','ans3','ans4','ans5','ans6','ans7']
+				columns = ['Submission time','Skipped survey','Joining time','via FBS','Num followers','World age','Verified','Username',\
+				'Gender','Age bracket','Do you watch talent vids?','I watch comedy','I watch singing','I watch dancing','I watch physical stunts',\
+				'I watch magic tricks','I watch pranks','I watch parody','I watch roasting','I watch none of these','I watch other genre(s)',\
+				'Do you create talent vids?','I create comedy','I create singing','I create dancing','I create physical stunts',\
+				'I create magic tricks','I create pranks','I create parody','I create roasting','I create none of these','I create other genre(s)',\
+				'Frequency of video consumption','Most used app for videos']
+				
 				wtr.writerow(columns)
 				for json_data in data_to_write_to_csv:
 					data = json.loads(json_data)
-					to_write = [data['username'].encode('utf-8'),data['skipped'],exact_date(data['join_date']),\
-					exact_date(data['submission_time']),data['on_fbs'],data['world_age'],data['num_pub_grps'],data['num_prv_grps'],\
-					data['num_1on1s'],data['num_fans'],data['num_topics'],data['last_public_txt_post_time'],data['last_public_pht_post_time'],\
-					data['ans1'],data['ans2'].encode('utf-8'),data['ans3'].encode('utf-8'),data['ans4'],data['ans5'],data['ans6'],data['ans7']]
+					verified = 'Yes' if data['verif'] else 'No'
+					#########################################
+					if data['skipped'] == '0':
+						# survey was taken
+						gender = 'Male' if data['ans4'] == '1' else 'Female'
+						age_code = data['ans5']
+						if age_code == '1':
+							age_bracket = '12-17'
+						elif age_code == '2':
+							age_bracket = '18-22'
+						elif age_code == '3':
+							age_bracket = '22 se zyada'
+						ans1_string = 'Yes' if data['ans1'] == '1' else 'No'
+						watch_none, watch_comedy, watch_singing, watch_dancing, watch_stunts, watch_magic, watch_pranks, watch_parody, \
+						watch_roasting = '-','-','-','-','-','-','-','-','-'
+						for ans in data['ans2']:
+							if ans == '1':
+								watch_none = 'Yes'
+							elif ans == '2':
+								watch_comedy = 'Yes'
+							elif ans == '3':
+								watch_singing = 'Yes'
+							elif ans == '4':
+								watch_dancing = 'Yes'
+							elif ans == '5':
+								watch_stunts = 'Yes'
+							elif ans == '6':
+								watch_magic = 'Yes'
+							elif ans == '7':
+								watch_pranks = 'Yes'
+							elif ans == '8':
+								watch_parody = 'Yes'
+							elif ans == '9':
+								watch_roasting = 'Yes'
+						create_none, create_comedy, create_singing, create_dancing, create_stunts, create_magic, create_pranks, create_parody,\
+						create_roasting = '-','-','-','-','-','-','-','-','-'
+						for ans in data['ans3']:
+							if ans == '1':
+								create_none = 'Yes'
+								ans3_string = 'No'
+							elif ans == '2':
+								create_comedy = 'Yes'
+								ans3_string = 'Yes'
+							elif ans == '3':
+								create_singing = 'Yes'
+								ans3_string = 'Yes'
+							elif ans == '4':
+								create_dancing = 'Yes'
+								ans3_string = 'Yes'
+							elif ans == '5':
+								create_stunts = 'Yes'
+								ans3_string = 'Yes'
+							elif ans == '6':
+								create_magic = 'Yes'
+								ans3_string = 'Yes'
+							elif ans == '7':
+								create_pranks = 'Yes'
+								ans3_string = 'Yes'
+							elif ans == '8':
+								create_parody = 'Yes'
+								ans3_string = 'Yes'
+							elif ans == '9':
+								create_roasting = 'Yes'
+								ans3_string = 'Yes'
+						ans3_string = 'Yes' if data['ans3b'] else ans3_string
+						freq_code = data['ans6']
+						if freq_code == '1':
+							freq_of_vid_consumption = 'Takreeban rozaana'
+						elif freq_code == '2':
+							freq_of_vid_consumption = 'Har 2-3 days baad'
+						elif freq_code == '3':
+							freq_of_vid_consumption = 'Har 1 week baad'
+						elif freq_code == '4':
+							freq_of_vid_consumption = 'Buhut kamm'
+						app_code = data['ans7']
+						if app_code == '1':
+							app_name = 'Youtube'
+						elif app_code == '2':
+							app_name = 'TikTok'
+						elif app_code == '3':
+							app_name = 'Facebook'
+						elif app_code == '4':
+							app_name = 'Likee'
+						elif app_code == '5':
+							app_name = 'Helo'
+						elif app_code == '6':
+							app_name = 'Kwai'
+						elif app_code == '7':
+							app_name = 'VidMate'
+						elif app_code == '8':
+							app_name = 'Instagram'
+						elif app_code == '9':
+							app_name = 'I dont use any'
+						to_write = [exact_date(data['submission_time']),'No',exact_date(data['join_date']),data['on_fbs'],data['num_followers'],\
+						data['world_age'],verified,data['username'].encode('utf-8'),gender,age_bracket,ans1_string,watch_comedy,watch_singing,\
+						watch_dancing,watch_stunts,watch_magic,watch_pranks,watch_parody,watch_roasting,watch_none,data['ans2b'].encode('utf-8'),\
+						ans3_string,create_comedy, create_singing, create_dancing, create_stunts, create_magic, create_pranks, create_parody, \
+						create_roasting,create_none,data['ans3b'].encode('utf-8'),freq_of_vid_consumption,app_name]
+					else:
+						# survey was skipped
+						to_write = [exact_date(data['submission_time']),'Yes',exact_date(data['join_date']),data['on_fbs'],data['num_followers'],\
+						data['world_age'],verified,data['username'].encode('utf-8'),'-','-','-','-','-','-','-','-','-','-','-','-','-','-','-',\
+						'-','-','-','-','-','-','-','-','-','-','-']
+					
 					wtr.writerows([to_write])
 	raise Http404("Completed ;)")
 
@@ -87,29 +192,43 @@ def survey(request):
 		finalize_submission = request.POST.get("fdec",None)#'1' means submit, '0' means skip
 		skip_survey = request.POST.get("sdec",None)#'1' means skip for sure, '0' means don't skip
 		ans1 = request.POST.get("q1",None)
-		ans2 = request.POST.get("q2",None)
-		ans3 = request.POST.get("q3",None)
+		ans2 = request.POST.getlist('q2',[u''])
+		ans2b = request.POST.get('q2b','')
+		ans3 = request.POST.getlist('q3',[u''])
+		ans3b = request.POST.get('q3b','')
 		ans4 = request.POST.get("q4",None)
 		ans5 = request.POST.get("q5",None)
 		ans6 = request.POST.get("q6",None)
 		ans7 = request.POST.get("q7",None)
+		###############
+		ans2_exists = True if (ans2[0] or ans2b) else False
+		ans3_exists = True if (ans3[0] or ans3b) else False
+		processed_ans2 = [u'',u'',u'',u'',u'',u'',u'',u'',u'']
+		processed_ans3 = [u'',u'',u'',u'',u'',u'',u'',u'',u'']
+		len_ans2, len_ans3 = len(ans2), len(ans3)
+		for i in range(len_ans2):
+			value = ans2[i]
+			if value:
+				idx = int(value)-1
+				if idx < 9:
+					processed_ans2[idx] = value
+		for i in range(len_ans3):
+			value = ans3[i]
+			if value:
+				idx = int(value)-1
+				if idx < 9:
+					processed_ans3[idx] = value
+		###############
 		if skip_survey == '1':
 			answers = {}
 			answers['skipped'] = '1'
-			answers['num_topics'] = get_num_topics(user_id)
-			fan_count = 0#get_fan_counts_in_bulk([str(user_id)])
-			answers['num_fans'] = fan_count[str(user_id)]
-			answers['num_pub_grps'], answers['num_prv_grps'] = get_num_groups(user_id)
+			answers['num_followers'] = get_all_follower_count(user_id)
 			answers['join_date'] = convert_to_epoch(User.objects.only('date_joined').get(id=user_id).date_joined)
 			answers['on_fbs'] = request.META.get('HTTP_X_IORG_FBS',False)
 			answers['world_age'] = get_world_age(user_id)
 			answers['username'] = retrieve_uname(user_id,decode=True)
-			answers['num_1on1s'] = get_num_grps(user_id)
 			answers['submission_time'] = time_now
-			latest_public_txt_post_time = []#get_latest_post(user_id=user_id, post_type='tx',only_time=True)
-			latest_public_pht_post_time = []#get_latest_post(user_id=user_id, post_type='img',only_time=True)
-			answers['last_public_txt_post_time'] = latest_public_txt_post_time if latest_public_txt_post_time else ''
-			answers['last_public_pht_post_time'] = latest_public_pht_post_time if latest_public_pht_post_time else ''
+			answers['verif'] = request.mobile_verified
 			answers['ans1'] = ''
 			answers['ans2'] = ''
 			answers['ans3'] = ''
@@ -127,44 +246,50 @@ def survey(request):
 			return render(request,"announcement/hxu_survey.html",{'sure_about_skipping':True})
 		elif finalize_submission == '1':
 			# user has submitted their answers - validate them
-			if ans1 and ans2 and ans3 and ans4 and ans5 and ans6 and ans7:
+			if ans1 and ans2_exists and ans3_exists and ans4 and ans5 and ans6 and ans7:
 				# all questions answered - but are the answers valid?
 				answers = {}
 				errors = {}
 				###############################
-				if ans1 in ('1','2','3','4'):
+				if ans1 in ('1','2'):
 					answers['ans1'] = ans1
 				else:
 					# invalid
-					errors['ans1'] = '1st sawal ka jawab sahi se chunein'
+					errors['ans1'] = '2nd sawal ka jawab sahi se chunein'
 					ans1 = None
 				###############################
-				ans2 = ans2.strip()
-				ans2 = strip_zero_width_characters(ans2)
-				if ans2:
-					# only save 1000 chars
-					answers['ans2'] = ans2[:1000]
+				ans2_invalid = False
+				for ans in ans2:
+					if ans:
+						if ans not in ('1','2','3','4','5','6','7','8','9'):
+							ans2_invalid = True
+							break
+				if ans2_invalid:
+					errors['ans2'] = '3rd sawal ka jawab sahi se chunein'
+					ans2 = None
 				else:
-					# invalid
-					errors['ans2'] = '2nd sawal ka jawab khali nahi chorein'
-					ans2 = ''
+					answers['ans2'] = processed_ans2
+					answers['ans2b'] = ans2b[:1000]# only save 1000 chars
 				###############################
-				ans3 = ans3.strip()
-				ans3 = strip_zero_width_characters(ans3)
-				if ans3:
-					# only save 1000 chars
-					answers['ans3'] = ans3[:1000]
+				ans3_invalid = False
+				for ans in ans3:
+					if ans:
+						if ans not in ('1','2','3','4','5','6','7','8','9'):
+							ans3_invalid = True
+							break
+				if ans3_invalid:
+					errors['ans3'] = '4th sawal ka jawab sahi se chunein'
+					ans3 = None
 				else:
-					# invalid
-					errors['ans3'] = '3rd sawal ka jawab khali nahi chorein'
-					ans3 = ''
+					answers['ans3'] = processed_ans3
+					answers['ans3b'] = ans3b[:1000]# only save 1000 chars
 				###############################
 				if ans4 in ('1','2'):
 					# sounds about right
 					answers['ans4'] = ans4
 				else:
 					# invalid
-					errors['ans4'] = '4th sawal ka jawab sahi se chunein'
+					errors['ans4'] = '5th sawal ka jawab sahi se chunein'
 					ans4 = None
 				###############################
 				if ans5 in ('1','2','3'):
@@ -172,18 +297,18 @@ def survey(request):
 					answers['ans5'] = ans5
 				else:
 					# invalid
-					errors['ans5'] = '5th sawal ka jawab sahi se chunein'
+					errors['ans5'] = '6th sawal ka jawab sahi se chunein'
 					ans5 = None
 				###############################
-				if ans6 in ('1','2','3'):
+				if ans6 in ('1','2','3','4'):
 					# sounds about right
 					answers['ans6'] = ans6
 				else:
 					# invalid
-					errors['ans6'] = '6th sawal ka jawab sahi se chunein'
+					errors['ans6'] = '1st sawal ka jawab sahi se chunein'
 					ans6 = None
 				###############################
-				if ans7 in ('1','2'):
+				if ans7 in ('1','2','3','4','5','6','7','8','9'):
 					# sounds about right
 					answers['ans7'] = ans7
 				else:
@@ -194,51 +319,46 @@ def survey(request):
 				if errors:
 					# also repopulate answers that were given
 					return render(request,"announcement/hxu_survey.html",{'invalid_answers':True,'errors':errors,\
-						'ans1':ans1,'ans2':ans2,'ans3':ans3,'ans4':ans4,'ans5':ans5,'ans6':ans6,'ans7':ans7})
+						'ans1':ans1,'ans2':processed_ans2,'ans2b':ans2b,'ans3':processed_ans3,'ans3b':ans3b,'ans4':ans4,\
+						'ans5':ans5,'ans6':ans6,'ans7':ans7})
 				else:
 					# no errors - log the answers!
 					time_now = time.time()
 					answers['skipped'] = '0'
-					answers['num_topics'] = get_num_topics(user_id)
-					fan_count = 0#get_fan_counts_in_bulk([str(user_id)])
-					answers['num_fans'] = fan_count[str(user_id)]
-					answers['num_pub_grps'], answers['num_prv_grps'] = get_num_groups(user_id)
+					answers['num_followers'] = get_all_follower_count(user_id)
 					answers['join_date'] = convert_to_epoch(User.objects.only('date_joined').get(id=user_id).date_joined)
 					answers['on_fbs'] = request.META.get('HTTP_X_IORG_FBS',False)
 					answers['world_age'] = get_world_age(user_id)
 					answers['username'] = retrieve_uname(user_id,decode=True)
-					answers['num_1on1s'] = get_num_grps(user_id)
 					answers['submission_time'] = time_now
-					latest_public_txt_post_time = []#get_latest_post(user_id=user_id, post_type='tx',only_time=True)
-					latest_public_pht_post_time = []#get_latest_post(user_id=user_id, post_type='img',only_time=True)
-					answers['last_public_txt_post_time'] = latest_public_txt_post_time if latest_public_txt_post_time else ''
-					answers['last_public_pht_post_time'] = latest_public_pht_post_time if latest_public_pht_post_time else ''
+					answers['verif'] = request.mobile_verified
 					log_superhuman_survey_answers(user_id=user_id, answers_dict=answers, time_now=time_now)
 					return render(request,"announcement/hxu_survey.html",{'submitted':True})
 			else:
 				# must answer all questions!
 				missing_ques = ''
-				if not ans1:
-					missing_ques += ' 1 '
-				if not ans2:
-					missing_ques += ' 2 '
-				if not ans3:
-					missing_ques += ' 3 '
-				if not ans4:
-					missing_ques += ' 4 '
-				if not ans5:
-					missing_ques += ' 5 '
 				if not ans6:
+					missing_ques += ' 1 '
+				if not ans1:
+					missing_ques += ' 2 '
+				if not ans2_exists:
+					missing_ques += ' 3 '
+				if not ans3_exists:
+					missing_ques += ' 4 '
+				if not ans4:
+					missing_ques += ' 5 '
+				if not ans5:
 					missing_ques += ' 6 '
 				if not ans7:
 					missing_ques += ' 7 '
 				# also repopulate answers that were given
 				return render(request,"announcement/hxu_survey.html",{'must_answer_all':True,'missing_ques':missing_ques,\
-					'ans1':ans1,'ans2':ans2,'ans3':ans3,'ans4':ans4,'ans5':ans5,'ans6':ans6,'ans7':ans7})
+					'ans1':ans1,'ans2':processed_ans2,'ans2b':ans2b,'ans3':processed_ans3,'ans3b':ans3b,'ans4':ans4,'ans5':ans5,\
+					'ans6':ans6,'ans7':ans7})
 		else:
 			# response of "finalize_submission" of "skip_survey" does not make sense, restart!
-			return render(request,"announcement/hxu_survey.html",{'error_final_dec':True,'ans1':ans1,'ans2':ans2,'ans3':ans3,\
-				'ans4':ans4,'ans5':ans5,'ans6':ans6,'ans7':ans7})
+			return render(request,"announcement/hxu_survey.html",{'error_final_dec':True,'ans1':ans1,'ans2':processed_ans2,\
+				'ans2b':ans2b,'ans3':processed_ans3,'ans3b':ans3b,'ans4':ans4,'ans5':ans5,'ans6':ans6,'ans7':ans7})
 	else:
 		already_answered, was_skipped = has_already_answered_superhuman_survey(request.user.id)
 		if already_answered:
