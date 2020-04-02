@@ -29,7 +29,7 @@
 		{% else %}
 
 		<article class="mbl" style="max-width:750px;display:block;border:3px solid #ececec;border-radius:12px;overflow:hidden;background:white;margin-left:auto;margin-right:auto">
-			{% photo_object pid=datum.id ooid=datum.ooid img_url=datum.i|s3 img_thumb=datum.i|s3:'thumb' caption=datum.cp|emoticons raw_caption=datum.cp origin='25' upload_time=datum.t|human_time machine_time=datum.mt oun=datum.ou av_url=datum.av|s3:'thumb' vsc=datum.nv is_fbs='' home_hash='' static_url=STATIC_URL is_star=datum.s show_trending=datum.tr %}
+			{% photo_object pid=datum.id ooid=datum.ooid img_url=datum.i|s3 img_thumb=datum.i|s3:'thumb' caption=datum.cp|emoticons origin='25' upload_time=datum.t|human_time machine_time=datum.mt oun=datum.ou av_url=datum.av|s3:'thumb' vsc=datum.nv is_fbs='' home_hash='' static_url=STATIC_URL is_star=datum.s show_trending=datum.tr alt_txt=datum.alt %}
 
 			<div style="flex-wrap:wrap" class="fx fxjscn fxaicn cxs sp cgy mbl">
 				{% big_group_button own_id=own_id target_id=datum.ooid parent_object_id=datum.obid object_type='photo' origin='25' target_username=datum.ou home_hash='' %}

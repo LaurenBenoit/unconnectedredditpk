@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+    xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
-{% for content_id, trending_time, content_type in content_ids_times_and_types reversed %}
+{% for content_id, trending_time, img_url in content_ids_times_and_types reversed %}
 	<url>
-		<loc>https://damadam.pk/content/{{ content_id }}/{{ content_type }}/</loc>
+		<loc>https://damadam.pk/content/{{ content_id }}/g/</loc>
+		<image:image>
+	      <image:loc>{{ img_url }}</image:loc>
+    	</image:image>
 		<lastmod>{{ trending_time }}</lastmod>
 	</url>
 {% endfor %}

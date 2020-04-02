@@ -2,30 +2,34 @@
 ///////////////////////////////////////////////////////////////////////////////////
 
 // opening 'more' modal
-document.getElementById("more_btn").addEventListener("click", function(e){
-  
-	var pop_up = document.getElementById("more_popup");
-	if (Object.prototype.toString.call(window.operamini) === "[object OperaMini]" || !e.currentTarget.value || !pop_up) return;
-	e.preventDefault();
+var more_btn = document.getElementById("more_btn");
+if (more_btn != null) {
 
-	// display an overlay
-	var overlay = document.createElement('div');
-    overlay.id = "personal_group_overlay";
-    overlay.className = 'ovl';//
-    overlay.style.background = '#000000';
-    overlay.style.opacity = '0.5';
+	more_btn.addEventListener("click", function(e){
+	  
+		var pop_up = document.getElementById("more_popup");
+		if (Object.prototype.toString.call(window.operamini) === "[object OperaMini]" || !e.currentTarget.value || !pop_up) return;
+		e.preventDefault();
 
-    // display the modal
-    document.body.appendChild(overlay);
-	pop_up.style.display = 'block';
+		// display an overlay
+		var overlay = document.createElement('div');
+	    overlay.id = "personal_group_overlay";
+	    overlay.className = 'ovl';//
+	    overlay.style.background = '#000000';
+	    overlay.style.opacity = '0.5';
 
-	// highlight the 'more' button in the bottom navbar
-	var more_btn = document.getElementById("more_btn");
-	var more_label = document.getElementById("more_label");
-	more_btn.style.backgroundColor = '#00bfa5';
-	more_label.style.fontWeight = '600';
+	    // display the modal
+	    document.body.appendChild(overlay);
+		pop_up.style.display = 'block';
 
-}); 
+		// highlight the 'more' button in the bottom navbar
+		var more_btn = document.getElementById("more_btn");
+		var more_label = document.getElementById("more_label");
+		more_btn.style.backgroundColor = '#00bfa5';
+		more_label.style.fontWeight = '600';
+
+	}); 
+}
 
 // closing 'more' modal
 document.getElementById("more_popup_x").addEventListener("click", function(){

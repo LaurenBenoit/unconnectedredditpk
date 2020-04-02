@@ -96,7 +96,7 @@
 			{% elif obj.type_of_content == 'g' %}
 				
 				<article class="mbl" style="max-width:750px;display:block;overflow:hidden;background:white;margin-left:auto;margin-right:auto;box-sizing:border-box">
-					{% photo_object pid=obj.id ooid=obj.submitter_id img_url=obj.image_file|s3 img_thumb=obj.image_file|s3:'thumb' caption=obj.description|emoticons raw_caption=obj.description origin=origin upload_time=obj.submitted_on|human_time machine_time=obj.submitted_on oun=target_uname av_url=target_avurl|s3:'thumb' vsc=obj.net_votes block_time_remaining=time_remaining is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=is_star lazyload_idx=forloop.counter show_trending=obj.trending_status ot='g' aud='p' exp=obj.mortality et=obj.expire_at time_now=time_now %}
+					{% photo_object pid=obj.id ooid=obj.submitter_id img_url=obj.image_file|s3 img_thumb=obj.image_file|s3:'thumb' caption=obj.description|emoticons origin=origin upload_time=obj.submitted_on|human_time machine_time=obj.submitted_on oun=target_uname av_url=target_avurl|s3:'thumb' vsc=obj.net_votes block_time_remaining=time_remaining is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=is_star lazyload_idx=forloop.counter show_trending=obj.trending_status ot='g' aud='p' exp=obj.mortality et=obj.expire_at time_now=time_now alt_txt=obj.web_link %}
 					<div style="flex-wrap:wrap" class="fx fxjscn fxaicn cxs sp cgy mbl">
 						
 						{% if is_own_profile %}
@@ -237,7 +237,7 @@
 					{% if obj.expire_at > time_now %}
 						<article class="mbl" style="max-width:750px;display:block;border:3px solid #ececec;border-radius:12px;overflow:hidden;background:white;margin-left:auto;margin-right:auto;box-sizing:border-box">
 
-							{% photo_object pid=obj.id ooid=obj.submitter_id img_url=obj.image_file|s3 img_thumb=obj.image_file|s3:'thumb' caption=obj.description|emoticons raw_caption=obj.description origin=origin upload_time=obj.submitted_on|human_time machine_time=obj.submitted_on oun=target_uname av_url=target_avurl|s3:'thumb' block_time_remaining=time_remaining vsc=obj.net_votes is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=is_star lazyload_idx=forloop.counter ot='g' aud='a' exp=obj.mortality %}
+							{% photo_object pid=obj.id ooid=obj.submitter_id img_url=obj.image_file|s3 img_thumb=obj.image_file|s3:'thumb' caption=obj.description|emoticons origin=origin upload_time=obj.submitted_on|human_time machine_time=obj.submitted_on oun=target_uname av_url=target_avurl|s3:'thumb' block_time_remaining=time_remaining vsc=obj.net_votes is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=is_star lazyload_idx=forloop.counter ot='g' aud='a' exp=obj.mortality alt_txt=obj.web_link %}
 
 							<div style="flex-wrap:wrap" class="fx fxjscn fxaicn cxs sp cgy mbl">
 								
@@ -264,7 +264,7 @@
 				{% else %}
 					<article class="mbl" style="max-width:750px;display:block;border:3px solid #ececec;border-radius:12px;overflow:hidden;background:white;margin-left:auto;margin-right:auto;box-sizing:border-box">
 
-						{% photo_object pid=obj.id ooid=obj.submitter_id img_url=obj.image_file|s3 img_thumb=obj.image_file|s3:'thumb' caption=obj.description|emoticons raw_caption=obj.description origin=origin upload_time=obj.submitted_on|human_time machine_time=obj.submitted_on oun=target_uname av_url=target_avurl|s3:'thumb' vsc=obj.net_votes block_time_remaining=time_remaining is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=is_star lazyload_idx=forloop.counter ot='g' aud='a' exp=obj.mortality %}
+						{% photo_object pid=obj.id ooid=obj.submitter_id img_url=obj.image_file|s3 img_thumb=obj.image_file|s3:'thumb' caption=obj.description|emoticons origin=origin upload_time=obj.submitted_on|human_time machine_time=obj.submitted_on oun=target_uname av_url=target_avurl|s3:'thumb' vsc=obj.net_votes block_time_remaining=time_remaining is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=is_star lazyload_idx=forloop.counter ot='g' aud='a' exp=obj.mortality alt_txt=obj.web_link %}
 
 						<div style="flex-wrap:wrap" class="fx fxjscn fxaicn cxs sp cgy mbl">
 							{% if time_remaining %}
@@ -351,7 +351,7 @@
 					{% if obj.expire_at > time_now %}
 						<article class="mbl" style="max-width:750px;display:block;border:3px solid #ececec;border-radius:12px;overflow:hidden;background:white;margin-left:auto;margin-right:auto;box-sizing:border-box">
 
-							{% photo_object pid=obj.id ooid=obj.submitter_id img_url=obj.image_file|s3 img_thumb=obj.image_file|s3:'thumb' caption=obj.description|emoticons raw_caption=obj.description origin=origin upload_time=obj.submitted_on|human_time machine_time=obj.submitted_on oun=target_uname av_url=target_avurl|s3:'thumb' block_time_remaining=time_remaining  vsc=obj.net_votes is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=is_star lazyload_idx=forloop.counter ot='g' aud='a' exp=obj.mortality %}
+							{% photo_object pid=obj.id ooid=obj.submitter_id img_url=obj.image_file|s3 img_thumb=obj.image_file|s3:'thumb' caption=obj.description|emoticons origin=origin upload_time=obj.submitted_on|human_time machine_time=obj.submitted_on oun=target_uname av_url=target_avurl|s3:'thumb' block_time_remaining=time_remaining  vsc=obj.net_votes is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=is_star lazyload_idx=forloop.counter ot='g' aud='a' exp=obj.mortality alt_txt=obj.web_link %}
 
 							<div style="flex-wrap:wrap" class="fx fxjscn fxaicn cxs sp cgy mbl">
 								{% include "big_buttons/big_sub_button.html" with is_subbed=is_follower username=target_uname tid=target_user_id origin=origin obid=obj.id obh='' static_url=STATIC_URL %}
@@ -374,7 +374,7 @@
 				{% else %}
 					<article class="mbl" style="max-width:750px;display:block;border:3px solid #ececec;border-radius:12px;overflow:hidden;background:white;margin-left:auto;margin-right:auto;box-sizing:border-box">
 
-						{% photo_object pid=obj.id ooid=obj.submitter_id img_url=obj.image_file|s3 img_thumb=obj.image_file|s3:'thumb' caption=obj.description|emoticons raw_caption=obj.description origin=origin upload_time=obj.submitted_on|human_time machine_time=obj.submitted_on oun=target_uname av_url=target_avurl|s3:'thumb' block_time_remaining=time_remaining vsc=obj.net_votes is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=is_star lazyload_idx=forloop.counter ot='g' aud='a' exp=obj.mortality %}
+						{% photo_object pid=obj.id ooid=obj.submitter_id img_url=obj.image_file|s3 img_thumb=obj.image_file|s3:'thumb' caption=obj.description|emoticons origin=origin upload_time=obj.submitted_on|human_time machine_time=obj.submitted_on oun=target_uname av_url=target_avurl|s3:'thumb' block_time_remaining=time_remaining vsc=obj.net_votes is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=is_star lazyload_idx=forloop.counter ot='g' aud='a' exp=obj.mortality alt_txt=obj.web_link %}
 
 						<div style="flex-wrap:wrap" class="fx fxjscn fxaicn cxs sp cgy mbl">
 							{% include "big_buttons/big_sub_button.html" with is_subbed=is_follower username=target_uname tid=target_user_id origin=origin obid=obj.id obh='' static_url=STATIC_URL %}
@@ -465,7 +465,7 @@
 					{% if obj.expire_at > time_now %}
 						<article class="mbl" style="max-width:750px;display:block;border:3px solid #ececec;border-radius:12px;overflow:hidden;background:white;margin-left:auto;margin-right:auto;box-sizing:border-box">
 
-							{% photo_object pid=obj.id ooid=obj.submitter_id img_url=obj.image_file|s3 img_thumb='' caption=obj.description|emoticons raw_caption=obj.description origin=origin upload_time=obj.submitted_on|human_time machine_time=obj.submitted_on oun=target_uname av_url=target_avurl|s3:'thumb' block_time_remaining=time_remaining vsc=obj.net_votes is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=is_star lazyload_idx=forloop.counter ot='g' aud='s' exp=obj.mortality %}
+							{% photo_object pid=obj.id ooid=obj.submitter_id img_url=obj.image_file|s3 img_thumb='' caption=obj.description|emoticons origin=origin upload_time=obj.submitted_on|human_time machine_time=obj.submitted_on oun=target_uname av_url=target_avurl|s3:'thumb' block_time_remaining=time_remaining vsc=obj.net_votes is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=is_star lazyload_idx=forloop.counter ot='g' aud='s' exp=obj.mortality alt_txt=obj.web_link %}
 
 							<div style="flex-wrap:wrap" class="fx fxjscn fxaicn cxs sp cgy mbl">
 								{% if not time_remaining %}
@@ -487,7 +487,7 @@
 				{% else %}
 					<article class="mbl" style="max-width:750px;display:block;border:3px solid #ececec;border-radius:12px;overflow:hidden;background:white;margin-left:auto;margin-right:auto;box-sizing:border-box">
 
-							{% photo_object pid=obj.id ooid=obj.submitter_id img_url=obj.image_file|s3 img_thumb='' caption=obj.description|emoticons raw_caption=obj.description origin=origin upload_time=obj.submitted_on|human_time machine_time=obj.submitted_on oun=target_uname av_url=target_avurl|s3:'thumb' block_time_remaining=time_remaining vsc=obj.vnet_votes is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=is_star lazyload_idx=forloop.counter ot='g' aud='s' exp=obj.mortality %}
+							{% photo_object pid=obj.id ooid=obj.submitter_id img_url=obj.image_file|s3 img_thumb='' caption=obj.description|emoticons origin=origin upload_time=obj.submitted_on|human_time machine_time=obj.submitted_on oun=target_uname av_url=target_avurl|s3:'thumb' block_time_remaining=time_remaining vsc=obj.vnet_votes is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=is_star lazyload_idx=forloop.counter ot='g' aud='s' exp=obj.mortality alt_txt=obj.web_link %}
 
 							<div style="flex-wrap:wrap" class="fx fxjscn fxaicn cxs sp cgy mbl">
 								{% if not time_remaining %}

@@ -57,7 +57,7 @@
     {% if viewable_status == '3' %}
         {% load get_photo_object %}
         {% load humanize %}
-        {% photo_object pid=photo_id ooid=photo_owner_id img_url=photo.image_file|s3 img_thumb=photo.image_file|s3:'thumb' caption=photo.description|emoticons raw_caption=photo.description origin='11' vsc=photo.net_votes upload_time=photo.submitted_on|naturaltime machine_time=photo.submitted_on oun=target_username av_url=av_url|s3:'thumb' static_url=STATIC_URL is_star=is_star exclude_detail_url='1' %}
+        {% photo_object pid=photo_id ooid=photo_owner_id img_url=photo.image_file|s3 img_thumb=photo.image_file|s3:'thumb' caption=photo.description|emoticons origin='11' vsc=photo.net_votes upload_time=photo.submitted_on|naturaltime machine_time=photo.submitted_on oun=target_username av_url=av_url|s3:'thumb' static_url=STATIC_URL is_star=is_star exclude_detail_url='1' alt_txt=photo.web_link %}
     {% elif viewable_status == '2' %}
         <div class="mtl mbl" style="text-align:center"><span class="cgy">- P O S T&nbsp;&nbsp;&nbsp;E X P I R E D -</span></div>
     {% elif viewable_status == '1' %}

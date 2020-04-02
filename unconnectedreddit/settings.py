@@ -220,8 +220,8 @@ CSRF_FAILURE_VIEW = 'links.views.csrf_failure'
 
 from django.core.urlresolvers import reverse_lazy
 
-LOGIN_URL=reverse_lazy('login')
-LOGIN_REDIRECT_URL = reverse_lazy('home')
+LOGIN_REDIRECT_URL = reverse_lazy('home')#The URL where requests are redirected after login when the contrib.auth.login view gets no next parameter.
+LOGIN_URL=reverse_lazy('unauth_home_new')
 LOGOUT_URL=reverse_lazy('logout')
 
 # A sample error logging configuration. The only tangible logging

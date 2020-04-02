@@ -70,7 +70,7 @@
 
 		<section itemprop="hasPart" itemscope itemtype="https://schema.org/SocialMediaPosting" style="display:block">
 			{% if viewable_status == '3' %}
-				{% photo_object pid=obj_id ooid=obj.submitter_id img_url=obj.image_file|s3 img_thumb=obj.image_file|s3:'thumb' caption=obj.description|emoticons raw_caption=obj.description origin='34' vsc=obj.net_votes is_fbs=on_fbs upload_time=obj.submitted_on|naturaltime machine_time=obj.submitted_on oun=oun av_url=av_url|s3:'thumb' static_url=STATIC_URL is_star=is_star exclude_detail_url='1' lazyload_idx=1 ratio=ratio %}
+				{% photo_object pid=obj_id ooid=obj.submitter_id img_url=obj.image_file|s3 img_thumb=obj.image_file|s3:'thumb' caption=obj.description|emoticons origin='34' vsc=obj.net_votes is_fbs=on_fbs upload_time=obj.submitted_on|naturaltime machine_time=obj.submitted_on oun=oun av_url=av_url|s3:'thumb' static_url=STATIC_URL is_star=is_star exclude_detail_url='1' lazyload_idx=1 ratio=ratio alt_txt=obj.web_link %}
 			{% elif viewable_status == '2' %}
 				<div class="mbl mtl" style="text-align:center"><span class="cgy">- P O S T&nbsp;&nbsp;&nbsp;E X P I R E D -</span></div>
 			{% elif viewable_status == '1' %}

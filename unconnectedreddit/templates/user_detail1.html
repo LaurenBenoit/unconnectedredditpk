@@ -1,4 +1,4 @@
-{% extends noindex|yesno:"base/base_noindex.html,base/base.html" %}
+{% extends "base/base_noindex.html" %}
 {% load s3 %}
 {% load humanize %}
 {% load emoticons_tags %}
@@ -8,7 +8,7 @@
 {% block content %}
 <head><title>{{ slug }}'s images | Damadam</title></head>
 
-<main itemscope itemtype="https://schema.org/CollectionPage" class="clb" style="margin: 0 auto;max-width:600px;width:98%">
+<main class="mtl mbl" itemscope itemtype="https://schema.org/CollectionPage" class="clb" style="margin-left:auto;margin-right:auto;max-width:600px;width:98%">
 
   <div class="mbl" style="text-align:center"> 
   {% if is_star %}<img src="{{ STATIC_URL }}img/gstar.svg" width="18" height="18">&nbsp;{% endif %}
@@ -22,7 +22,6 @@
     <h1 class="cxl lsp" style="display:inline">{% if is_trending %}<span itemprop="headline"><span itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="alternateName">{{ slug }}</span></span>'s trending images</span>:<br><span class="cs cgy sp lsp" style="font-weight:lighter">(last 7 days)</span>{% else %}<span itemprop="headline"><span itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="alternateName">{{ slug }}</span></span>'s shared images</span>:{% endif %}</h1>
   {% endif %}
   </div>
-  <div style="text-align:center" class="cxl cr lsp">- this section will be removed soon -</div>
 
 {% if page_obj.number == 1 and not is_trending %}
  <article class="mbl" style="border:3px solid #ececec;border-radius:12px;overflow:hidden;background:white;padding-bottom:10px">
@@ -76,7 +75,7 @@
   <article itemprop="hasPart" itemscope itemtype="https://schema.org/SocialMediaPosting" class="mbl" style="border:3px solid #ececec;border-radius:12px;overflow:hidden;background:white">
       <a name="section{{ forloop.counter }}"></a>
 
-      {% photo_object pid=photo.id ooid=star_id img_url=photo.image_file.url|s3 img_thumb=photo.image_file|s3:'thumb' caption=photo.caption|emoticons raw_caption=photo.caption vsc=photo.vote_score is_fbs=on_fbs origin=4 upload_time=photo.upload_time|naturaltime machine_time=photo.upload_time oun=slug static_url=STATIC_URL block_time_remaining=time_remaining show_uname_credentials=False show_trending=photo.device lazyload_idx=forloop.counter %}
+      {% photo_object pid=photo.id ooid=star_id img_url=photo.image_file.url|s3 img_thumb=photo.image_file|s3:'thumb' caption=photo.caption|emoticons vsc=photo.vote_score is_fbs=on_fbs origin=4 upload_time=photo.upload_time|naturaltime machine_time=photo.upload_time oun=slug static_url=STATIC_URL block_time_remaining=time_remaining show_uname_credentials=False show_trending=photo.device lazyload_idx=forloop.counter alt_txt=photo.caption %}
         
         <div class="mbs mtl">
           <div style="flex-wrap:wrap" class="fx fxjscn fxaicn cxs sp cgy">

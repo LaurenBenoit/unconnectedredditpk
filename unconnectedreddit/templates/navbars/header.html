@@ -28,11 +28,3 @@
 		{% endif %}
 	</form>
 </header>
-<!--  -->
-{% load take_survey %}
-{% can_show_survey as show_survey %}
-{% if show_survey %}
-<div style="background:coral;background: linear-gradient(-45deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%);text-align:center;height:36px;line-height:36px">
-	<a href="{% url 'survey' %}" class="clw sp" style="font-weight:600">take survey <img src="{{ STATIC_URL }}img/next.svg" width="14" height="14" style="vertical-align:middle"></a>
-</div>
-{% endif %}

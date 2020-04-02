@@ -2662,7 +2662,7 @@ def share_photo_in_personal_group(request):
 				return render(request,"personal_group/sharing/share_photo_in_personal_group.html",context)
 		else:
 			# render 1st page
-			payload = request.POST.get("pl").split(":",4)#maxsplit set to 4 to ensure caption containing ':' is not split
+			payload = request.POST.get("pl").split(":",4)# 'pl' contains {{ owner_uname }}:{{ pid }}:{{ origin }}:{{ oid }}:{{ caption }}
 			owner_username, photo_id, origin, owner_id, photo_caption = payload[0], payload[1], payload[2], payload[3], payload[4]
 			photo_url = request.POST.get("purl")
 			request.session["personal_group_shared_photo_id"] = photo_id

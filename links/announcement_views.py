@@ -66,7 +66,7 @@ def export_survey_results(request):
 				'I watch magic tricks','I watch pranks','I watch parody','I watch roasting','I watch none of these','I watch other genre(s)',\
 				'Do you create talent vids?','I create comedy','I create singing','I create dancing','I create physical stunts',\
 				'I create magic tricks','I create pranks','I create parody','I create roasting','I create none of these','I create other genre(s)',\
-				'Frequency of video consumption','Most used app for videos']
+				'Frequency of video consumption','Most used app for videos','Optional talent video link']
 				
 				wtr.writerow(columns)
 				for json_data in data_to_write_to_csv:
@@ -164,16 +164,17 @@ def export_survey_results(request):
 							app_name = 'Instagram'
 						elif app_code == '9':
 							app_name = 'I dont use any'
+						vid_link = data.get('ans8','-')
 						to_write = [exact_date(data['submission_time']),'No',exact_date(data['join_date']),data['on_fbs'],data['num_followers'],\
 						data['world_age'],verified,data['username'].encode('utf-8'),gender,age_bracket,ans1_string,watch_comedy,watch_singing,\
 						watch_dancing,watch_stunts,watch_magic,watch_pranks,watch_parody,watch_roasting,watch_none,data['ans2b'].encode('utf-8'),\
 						ans3_string,create_comedy, create_singing, create_dancing, create_stunts, create_magic, create_pranks, create_parody, \
-						create_roasting,create_none,data['ans3b'].encode('utf-8'),freq_of_vid_consumption,app_name]
+						create_roasting,create_none,data['ans3b'].encode('utf-8'),freq_of_vid_consumption,app_name,vid_link.encode('utf-8') if vid_link else '-']
 					else:
 						# survey was skipped
 						to_write = [exact_date(data['submission_time']),'Yes',exact_date(data['join_date']),data['on_fbs'],data['num_followers'],\
 						data['world_age'],verified,data['username'].encode('utf-8'),'-','-','-','-','-','-','-','-','-','-','-','-','-','-','-',\
-						'-','-','-','-','-','-','-','-','-','-','-']
+						'-','-','-','-','-','-','-','-','-','-','-','-']
 					
 					wtr.writerows([to_write])
 	raise Http404("Completed ;)")
@@ -200,6 +201,7 @@ def survey(request):
 		ans5 = request.POST.get("q5",None)
 		ans6 = request.POST.get("q6",None)
 		ans7 = request.POST.get("q7",None)
+		ans8 = request.POST.get("q8",'')
 		###############
 		ans2_exists = True if (ans2[0] or ans2b) else False
 		ans3_exists = True if (ans3[0] or ans3b) else False
@@ -236,6 +238,7 @@ def survey(request):
 			answers['ans5'] = ''
 			answers['ans6'] = ''
 			answers['ans7'] = ''
+			answers['ans8'] = ''
 			log_superhuman_survey_answers(user_id=user_id, answers_dict=answers, time_now=time_now)
 			return render(request,"announcement/hxu_survey.html",{'skipped':True})
 		elif skip_survey == '0':
@@ -316,11 +319,17 @@ def survey(request):
 					errors['ans7'] = '7th sawal ka jawab sahi se chunein'
 					ans7 = None
 				###############################
+				if ans8:
+					ans8 = ans8.strip()
+					ans8 = strip_zero_width_characters(ans8)
+					if ans8:
+						# only save 1000 chars
+						answers['ans8'] = ans8[:600]
 				if errors:
 					# also repopulate answers that were given
 					return render(request,"announcement/hxu_survey.html",{'invalid_answers':True,'errors':errors,\
 						'ans1':ans1,'ans2':processed_ans2,'ans2b':ans2b,'ans3':processed_ans3,'ans3b':ans3b,'ans4':ans4,\
-						'ans5':ans5,'ans6':ans6,'ans7':ans7})
+						'ans5':ans5,'ans6':ans6,'ans7':ans7,'ans8':ans8})
 				else:
 					# no errors - log the answers!
 					time_now = time.time()
@@ -354,11 +363,11 @@ def survey(request):
 				# also repopulate answers that were given
 				return render(request,"announcement/hxu_survey.html",{'must_answer_all':True,'missing_ques':missing_ques,\
 					'ans1':ans1,'ans2':processed_ans2,'ans2b':ans2b,'ans3':processed_ans3,'ans3b':ans3b,'ans4':ans4,'ans5':ans5,\
-					'ans6':ans6,'ans7':ans7})
+					'ans6':ans6,'ans7':ans7,'ans8':ans8})
 		else:
 			# response of "finalize_submission" of "skip_survey" does not make sense, restart!
 			return render(request,"announcement/hxu_survey.html",{'error_final_dec':True,'ans1':ans1,'ans2':processed_ans2,\
-				'ans2b':ans2b,'ans3':processed_ans3,'ans3b':ans3b,'ans4':ans4,'ans5':ans5,'ans6':ans6,'ans7':ans7})
+				'ans2b':ans2b,'ans3':processed_ans3,'ans3b':ans3b,'ans4':ans4,'ans5':ans5,'ans6':ans6,'ans7':ans7,'ans8':ans8})
 	else:
 		already_answered, was_skipped = has_already_answered_superhuman_survey(request.user.id)
 		if already_answered:

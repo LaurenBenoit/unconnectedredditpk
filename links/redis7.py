@@ -14,9 +14,9 @@ from page_controls import ITEMS_PER_PAGE_IN_ADMINS_LEDGER, DEFENDER_LEDGERS_SIZE
 from redis3 import retrieve_user_world_age, exact_date
 from abuse import FLAGGED_PUBLIC_TEXT_POSTING_WORDS
 from redis4 import retrieve_bulk_credentials
+from models import Link, Photo, Cooldown
 from collections import defaultdict
 from colors import COLOR_GRADIENTS
-from models import Link, Photo
 from location import REDLOC7
 
 POOL = redis.ConnectionPool(connection_class=redis.UnixDomainSocketConnection, path=REDLOC7, db=0)
@@ -837,30 +837,30 @@ def retrieve_voting_records(voter_id, start_idx=0, end_idx=-1, upvotes=True, wit
 #################################################### Updating image content objects ############################################
 
 
-def get_recent_photos(user_id):
-	"""
-	Contains last 5 photos
+# def get_recent_photos(user_id):
+# 	"""
+# 	Contains last 5 photos
 
-	This list self-deletes if user doesn't upload a photo for more than 4 days
-	"""
-	return redis.Redis(connection_pool=POOL).lrange("imgs:"+str(user_id), 0, -1)
+# 	This list self-deletes if user doesn't upload a photo for more than 4 days
+# 	"""
+# 	return redis.Redis(connection_pool=POOL).lrange("imgs:"+str(user_id), 0, -1)
 
 
-def save_recent_photo(user_id, photo_id):
+def save_recent_photo(user_id, photo_id, time_now):
 	"""
-	Save last 5 photos uploaded by a user
+	Add the image to some required data structures
 	"""
-	time_now = time.time()
-	key_name = "imgs:"+str(user_id)
+	# time_now = time.time()
+	# key_name = "imgs:"+str(user_id)
 	my_server = redis.Redis(connection_pool=POOL)
-	my_server.lpush(key_name, photo_id)
-	my_server.ltrim(key_name, 0, 4) # save the most recent 5 photos'
-	my_server.expire(key_name,FOUR_DAYS) #ensuring people who don't post anything for 4 days have to restart
+	# my_server.lpush(key_name, photo_id)
+	# my_server.ltrim(key_name, 0, 4) # save the most recent 5 photos'
+	# my_server.expire(key_name,FOUR_DAYS) #ensuring people who don't post anything for 4 days have to restart
 	############################################
-	my_server.setex(MOST_RECENT_IMG_UPLOAD_TIME+str(user_id),time_now,ONE_MONTH)
-	my_server.zincrby(GLOBAL_UPLOADED_IMG_VOLUME,user_id,amount=1)
+	my_server.setex(MOST_RECENT_IMG_UPLOAD_TIME+str(user_id),time_now,ONE_MONTH)# used in 'rep' calculation
 	############################################
 	# useful for display a 'counter' in our 'fresh' page page
+	my_server.zincrby(GLOBAL_UPLOADED_IMG_VOLUME,user_id,amount=1)
 	my_server.zadd(GLOBAL_UPLOADED_IMGS,photo_id,time_now)
 	if random() < 0.01:
 		# run clean up after 100 attempts (on avg)
@@ -945,9 +945,8 @@ def add_obj_to_photo_feed(submitter_id, time_now, hash_name, my_server=None):
 
 
 def add_image_post(obj_id, categ, submitter_id, submitter_av_url, submitter_username, is_star, img_url, img_caption, \
-	submission_time, from_fbs, type_of_object, comments, img_height, img_width, add_to_home_feed=False, \
+	submission_time, from_fbs, type_of_object, comments, img_height, img_width, alt_text, add_to_home_feed=False, \
 	add_to_photo_feed=True, poster_defined_expiry_time=None):
-
 	"""
 	Creating image object (used in home and photo feed, etc)
 	"""
@@ -958,7 +957,7 @@ def add_image_post(obj_id, categ, submitter_id, submitter_av_url, submitter_user
 	img_hw_ratio = (1.0*img_width/img_height)
 	immutable_data = {'i':obj_id,'c':categ,'sa':submitter_av_url,'su':submitter_username,'si':submitter_id,'t':submission_time,\
 	'd':img_caption,'iu':img_url,'it':img_thumb,'h':hash_name,'ht':img_height,'wd':img_width,'com':comments, 'ot':type_of_object[0], \
-	'aud':type_of_object[1],'rt':round((100.0/img_hw_ratio),2),'nht':round(MAX_PUBLIC_IMG_WIDTH/img_hw_ratio)}
+	'aud':type_of_object[1],'rt':round((100.0/img_hw_ratio),2),'nht':round(MAX_PUBLIC_IMG_WIDTH/img_hw_ratio),'alt':alt_text}
 
 	expiry = type_of_object[2]
 	if expiry:
@@ -2117,7 +2116,7 @@ def select_hand_picked_obj_for_trending(feed_type='best_photos'):
 	"""
 	Pick the submitter within HAND_PICKED_TRENDING_PHOTOS with the best voting score (aud-likes based vote score used here)
 	"""
-	pushed, obj_id = False, None
+	pushed, obj_id, audience = False, None, None
 	my_server = redis.Redis(connection_pool=POOL)
 	all_enqueued_members = my_server.zrange(HAND_PICKED_TRENDING_PHOTOS,0,-1)	
 	vote_keys = []
@@ -2172,6 +2171,7 @@ def select_hand_picked_obj_for_trending(feed_type='best_photos'):
 			# push this into trending
 			else:
 				obj_id = obj_hash_data['i']
+				audience = obj_hash_data['aud']
 				obj_hash_data['tos'] = time.time()# time_of_selection
 				########################
 				# related to 'rep'
@@ -2185,7 +2185,7 @@ def select_hand_picked_obj_for_trending(feed_type='best_photos'):
 				pushed = True
 				break# break out of the for loop
 	
-	return pushed, obj_id
+	return pushed, obj_id, audience
 
 
 # def select_hand_picked_obj_for_trending(feed_type='best_photos'):
@@ -2383,7 +2383,9 @@ def remove_obj_from_trending(prefix,obj_id):
 			pipeline1.zrem(TRENDING_FOTOS_AND_TIMES,obj_id)
 			pipeline1.zrem(TRENDING_FOTOS_AND_USERS,obj_id)
 			pipeline1.execute()
-			# Photo.objects.filter(id=obj_id).update(device='1')
+			# in case the object trended and was part of the sitemap, remove it from the sitemap model
+			if Cooldown.objects.filter(content_id=obj_id).exists():
+				Cooldown.objects.filter(content_id=obj_id).delete()
 			Link.objects.filter(id=obj_id).update(trending_status='0')
 			feeds_to_subtract = [TRENDING_PHOTO_FEED]#,TRENDING_PHOTO_DETAILS]#,TRENDING_PICS_AND_TIMES,TRENDING_PICS_AND_USERS]
 			log_user_submission(submitter_id=obj_owner_id, submitted_obj=composite_id, feeds_to_subtract=feeds_to_subtract, \

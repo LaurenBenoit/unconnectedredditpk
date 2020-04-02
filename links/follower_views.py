@@ -759,7 +759,7 @@ def display_user_public_feed_history(request, target_uname):
 
 				dict_data = Link.objects.values('id','submitter_id','submitted_on','type_of_content','description','url',\
 					'image_file','reply_count','net_votes','trending_status','cagtegory','expire_at','comment_status',\
-					'mortality').filter(Q(submitter_id=target_user_id,audience='p',delete_status='0',mortality='i')|\
+					'mortality','web_link').filter(Q(submitter_id=target_user_id,audience='p',delete_status='0',mortality='i')|\
 					Q(submitter_id=target_user_id,audience='p',delete_status='0',expire_at__gte=time_now)).\
 					order_by('-id')[start_index:end_index+1]
 
@@ -899,7 +899,7 @@ def display_user_follower_feed_history(request, target_uname):
 
 				dict_data = Link.objects.values('id','submitter_id','submitted_on','type_of_content','description','url',\
 					'image_file','reply_count','net_votes','trending_status','cagtegory','expire_at','comment_status',\
-					'mortality').filter(Q(submitter_id=target_user_id,audience='a',delete_status='0',mortality='i')|\
+					'mortality','web_link').filter(Q(submitter_id=target_user_id,audience='a',delete_status='0',mortality='i')|\
 					Q(submitter_id=target_user_id,audience='a',delete_status='0',mortality='m',expire_at__gte=time_now)).\
 					order_by('-id')[start_index:end_index+1]
 
@@ -1015,7 +1015,7 @@ def display_user_private_feed_history(request, target_uname):
 			if total_objs > 0:
 
 				dict_data = Link.objects.values('id','submitter_id','submitted_on','type_of_content','expire_at','description',\
-					'url','image_file','reply_count','net_votes','trending_status','cagtegory','comment_status','mortality'\
+					'url','image_file','reply_count','net_votes','trending_status','cagtegory','comment_status','mortality','web_link',\
 					).filter(Q(submitter_id=target_user_id,audience='s',delete_status='0',mortality='m',expire_at__gte=time_now)|\
 					Q(submitter_id=target_user_id,audience='s',delete_status='0',mortality='i')).\
 					order_by('-id')[start_index:end_index+1]
@@ -1079,7 +1079,8 @@ def display_trending_history(request, target_uname):
 
 		# retrieve  objects
 		object_list = Link.objects.values('id','description','image_file','net_votes','submitted_on','reply_count','type_of_content',\
-			'cagtegory','url','expire_at').filter(trending_status='1',delete_status='0',submitter_id=target_id).order_by('-id')[start_index:end_index+1]
+			'cagtegory','url','expire_at','web_link').filter(trending_status='1',delete_status='0',submitter_id=target_id).\
+		order_by('-id')[start_index:end_index+1]
 
 		context = {'target_uname':target_uname,'on_fbs':request.META.get('HTTP_X_IORG_FBS',False),'is_star':is_image_star(user_id=target_id),\
 		'own_profile':True,'star_id':target_id,'av_url':get_s3_object(retrieve_avurl(target_id),category='thumb'),'total_objs':total_objs,\

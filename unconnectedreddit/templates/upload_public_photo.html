@@ -31,11 +31,16 @@
 
         {% if show_instructions %}
             <div class="mbl" style="text-align:left;background-color:#ffffe6;padding:4px 8px 6px 8px;border-bottom:1px solid #e9ebee">
-            <div style="text-align:center" class="cxl lsp">Welcome! Original images post karein aur followers barhain!</div>
-            <hr size=1 COLOR="#E9EBEE">
-            <div class="mt sp lsp">1) Agr apka image dilchusp hua tou 'trending' mein aa sakta hai</div>
-            <div class="mts sp lsp">2) 'Trending' mein aney se apko aur users 'Follow' karna start kar dete hain</div>
-            <div class="mts sp lsp">3) Image examples: Original content, current affairs, memes, poetry, riddles, quotes, sports, or nature etc</div>
+                <div style="text-align:center" class="cxl lsp">Welcome! Original images post karein aur followers barhain!</div>
+                <hr size=1 COLOR="#E9EBEE">
+                <div class="mt sp lsp">1) Agr apka image dilchusp hua tou 'trending' mein aa sakta hai</div>
+                <div class="mts sp lsp">2) 'Trending' mein aney se apko aur users 'Follow' karna start kar dete hain</div>
+                <div class="mts sp lsp">3) Image examples: Original content, current affairs, memes, poetry, riddles, quotes, sports, or nature etc</div>
+            </div>
+        {% elif ttl %}
+            {% load future_time %}
+            <div class="mbl" style="text-align:left;background-color:#ffffe6;padding:4px 8px 6px 8px;border-bottom:1px solid #e9ebee">
+                <div style="text-align:center" class="cr cl lsp">Note: Ap image share kar sakein ge {{ ttl|future_time }}...</div>
             </div>
         {% endif %}
         <form action="{% url 'upload_public_photo' %}" id="public_photo_form" class="mt" method="POST" enctype="multipart/form-data">

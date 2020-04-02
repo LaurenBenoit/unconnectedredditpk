@@ -33,7 +33,7 @@
   <article itemprop="hasPart" itemscope itemtype="https://schema.org/SocialMediaPosting" class="mbl" style="overflow:hidden;background:white;padding-top:6px">
       <a name="section{{ forloop.counter }}"></a>
 
-      {% photo_object pid=obj.id ooid=star_id img_url=obj.image_file|s3 img_thumb=obj.image_file|s3:'thumb' caption=obj.description|emoticons raw_caption=obj.description vsc=obj.net_votes is_fbs=on_fbs origin='14' upload_time=obj.submitted_on|naturaltime machine_time=obj.submitted_on oun=target_uname av_url=av_url static_url=STATIC_URL block_time_remaining=time_remaining show_trending='' lazyload_idx=forloop.counter ot='g' et=obj.expire_at time_now=time_now %}
+      {% photo_object pid=obj.id ooid=star_id img_url=obj.image_file|s3 img_thumb=obj.image_file|s3:'thumb' caption=obj.description|emoticons vsc=obj.net_votes is_fbs=on_fbs origin='14' upload_time=obj.submitted_on|naturaltime machine_time=obj.submitted_on oun=target_uname av_url=av_url static_url=STATIC_URL block_time_remaining=time_remaining show_trending='' lazyload_idx=forloop.counter ot='g' et=obj.expire_at time_now=time_now alt_txt=obj.web_link %}
         
         <div class="mbs mtl">
           <div style="flex-wrap:wrap" class="fx fxjscn fxaicn cxs sp cgy">

@@ -35,7 +35,7 @@
 		{% else %}
 
 		<article class="mbl" style="max-width:750px;display:block;border:3px solid #ececec;border-radius:12px;overflow:hidden;background:white;margin-left:auto;margin-right:auto">
-			{% photo_object pid=datum.id ooid=datum.ooid img_url=datum.i|s3 img_thumb=datum.i|s3:'thumb' caption=datum.cp|emoticons raw_caption=datum.cp origin='33' upload_time=datum.t|human_time machine_time=datum.mt oun=datum.ou av_url=datum.av|s3:'thumb' vsc=datum.nv is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=datum.s show_trending=datum.tr lazyload_idx=forloop.counter ot='g' %}
+			{% photo_object pid=datum.id ooid=datum.ooid img_url=datum.i|s3 img_thumb=datum.i|s3:'thumb' caption=datum.cp|emoticons origin='33' upload_time=datum.t|human_time machine_time=datum.mt oun=datum.ou av_url=datum.av|s3:'thumb' vsc=datum.nv is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=datum.s show_trending=datum.tr lazyload_idx=forloop.counter ot='g' alt_txt=datum.alt %}
 
 			<div style="flex-wrap:wrap" class="fx fxjscn fxaicn cxs sp cgy mbl">
 				<div class="fx fxjsfs" style="margin-bottom:4px;margin-right:4px;padding:0">

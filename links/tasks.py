@@ -773,13 +773,15 @@ def rank_all_photos():
 	Mislabeled task due to legacy reasons
 	"""
 	time_now = time.time()
-	pushed, obj_id = select_hand_picked_obj_for_trending()#push_hand_picked_obj_into_trending()
-	if pushed and obj_id:
-		cohort_num = int(time_now/604800)#cohort size is 1 week
-		Cooldown.objects.create(content_id=obj_id,hot_score=cohort_num)
-		# Logout.objects.create(logout_user_id=obj_id,pre_logout_score=cohort_num)
+	pushed, obj_id, audience = select_hand_picked_obj_for_trending()#push_hand_picked_obj_into_trending()
+	if pushed and obj_id and audience == 'p':
 		#####################################################
-		# Send this to Facebook fan page (every 6 hours)
+		# if it wasn't already added to the sitemap - add it now so that crawlers can index the image
+		if not Cooldown.objects.filter(content_id=obj_id).exists():
+			cohort_num = int(time_now/604800)#cohort size is 1 week
+			Cooldown.objects.create(content_id=obj_id,hot_score=cohort_num)
+		#####################################################
+		# Also send image to Facebook fan page (every few hours)
 		if can_post_image_on_fb_fan_page():
 			photo = Link.objects.only('image_file','description','submitter__username').get(id=obj_id)
 			photo_poster(image_obj=photo.image_file, image_caption=photo.description, owner_username=photo.submitter.username, \
@@ -788,8 +790,8 @@ def rank_all_photos():
 		#####################################################
 	else:
 		pass
-		# TODO : activate when 'handpicked_prob' has been built
 		#####################################################
+		# TODO : activate when 'handpicked_prob' has been built
 		# fresh_photo_ids = get_photo_feed(feed_type='fresh_photos')#fresh photos in hash format
 		# best_photo_ids = get_photo_feed(feed_type='best_photos')#trending photos in hash format
 		# remaining_fresh_photo_ids = [id_ for id_ in fresh_photo_ids if id_ not in best_photo_ids]#unselected photos so far

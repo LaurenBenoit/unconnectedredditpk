@@ -58,7 +58,7 @@
 
 				{% if datum.ex > time_now %}
 					<!-- can be shown -->
-					{% photo_object pid=datum.id ooid=datum.ooid img_url=datum.i|s3 img_thumb=datum.i|s3:'thumb' caption=datum.cp|emoticons raw_caption=datum.cp origin='25' upload_time=datum.t|human_time machine_time=datum.mt oun=datum.ou av_url=datum.av|s3:'thumb' vsc=datum.nv is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=datum.s show_trending=datum.tr lazyload_idx=forloop.counter ot='g' %}
+					{% photo_object pid=datum.id ooid=datum.ooid img_url=datum.i|s3 img_thumb=datum.i|s3:'thumb' caption=datum.cp|emoticons origin='25' upload_time=datum.t|human_time machine_time=datum.mt oun=datum.ou av_url=datum.av|s3:'thumb' vsc=datum.nv is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=datum.s show_trending=datum.tr lazyload_idx=forloop.counter ot='g' alt_txt=datum.cp %}
 
 					<div style="flex-wrap:wrap" class="fx fxjscn fxaicn cxs sp cgy mbl">
 						{% big_group_button own_id=own_id target_id=datum.ooid parent_object_id=datum.obid object_type='photo' origin='25' target_username=datum.ou home_hash='' %}
@@ -76,7 +76,7 @@
 
 			{% else %}
 				<!-- can be shown -->
-				{% photo_object pid=datum.id ooid=datum.ooid img_url=datum.i|s3 img_thumb=datum.i|s3:'thumb' caption=datum.cp|emoticons raw_caption=datum.cp origin='25' upload_time=datum.t|human_time machine_time=datum.mt oun=datum.ou av_url=datum.av|s3:'thumb' vsc=datum.nv is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=datum.s show_trending=datum.tr lazyload_idx=forloop.counter ot='g' %}
+				{% photo_object pid=datum.id ooid=datum.ooid img_url=datum.i|s3 img_thumb=datum.i|s3:'thumb' caption=datum.cp|emoticons origin='25' upload_time=datum.t|human_time machine_time=datum.mt oun=datum.ou av_url=datum.av|s3:'thumb' vsc=datum.nv is_fbs=on_fbs home_hash='' static_url=STATIC_URL is_star=datum.s show_trending=datum.tr lazyload_idx=forloop.counter ot='g' alt_txt=datum.cp %}
 
 				<div style="flex-wrap:wrap" class="fx fxjscn fxaicn cxs sp cgy mbl">
 					{% big_group_button own_id=own_id target_id=datum.ooid parent_object_id=datum.obid object_type='photo' origin='25' target_username=datum.ou home_hash='' %}

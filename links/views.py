@@ -69,15 +69,15 @@ from redis6 import invalidate_cached_mehfil_replies, save_group_submission, retr
 retrieve_group_reqd_data# invalidate_cached_mehfil_pages
 from redis7 import add_text_post, get_home_feed, retrieve_obj_feed, get_best_photo_feed, get_photo_feed, retrieve_recent_votes,\
 add_image_post, insert_hash, is_fbs_user_rate_limited_from_photo_upload, in_defenders, retrieve_photo_feed_index,retrieve_top_trenders,\
-rate_limit_fbs_public_photo_uploaders, check_content_and_voting_ban, save_recent_photo, get_recent_photos, get_best_home_feed,\
+rate_limit_fbs_public_photo_uploaders, check_content_and_voting_ban, get_temp_post_data, get_all_image_star_ids, get_best_home_feed,\
 invalidate_cached_public_replies, retrieve_cached_public_replies, cache_public_replies,retrieve_home_feed_index, retrieve_best_home_feed_index,\
 retrieve_trending_photo_ids, retrieve_num_trending_photos, retrieve_subscribed_topics, retrieve_photo_feed_latest_mod_time, add_topic_post, \
 get_recent_trending_photos, cache_recent_trending_images, get_cached_recent_trending_images, retrieve_last_vote_time, retrieve_top_stars, \
-is_image_star, get_all_image_star_ids, retreive_trending_rep, log_recent_text,set_temp_post_data, get_temp_post_data, retrieve_fresh_image_count
+is_image_star, retreive_trending_rep, log_recent_text,set_temp_post_data, retrieve_fresh_image_count, save_recent_photo
 from redis2 import filter_following, check_if_follower, get_verified_follower_count, followers_exist, get_following_count, retrieve_follower_data, \
 fan_out_to_followers, can_follower_view_post, invalidate_cached_user_feed_history, get_last_post_selected_followers, get_all_follower_count#, logging_post_data
+from utilities import beautiful_date, convert_to_epoch, image_description_generator
 from redis9 import retrieve_latest_direct_reply, get_last_comment_time
-from utilities import beautiful_date, convert_to_epoch
 from redis8 import retrieve_variation_subset, set_tutorial_seen
 from direct_response_forms import DirectResponseForm
 from cities import CITY_TUP_LIST, REV_CITY_DICT
@@ -588,7 +588,7 @@ def content_detail_view(request, pk, origin=None, obj_type=None):
 
 		try:
 			obj = Link.objects.only('description','net_votes','image_file','id','delete_status','submitter','expire_at',\
-				'audience','type_of_content','submitted_on','reply_count','comment_status').get(id=pk)
+				'audience','type_of_content','submitted_on','reply_count','comment_status','web_link').get(id=pk)
 		except Link.DoesNotExist:
 			context["absent"] = True
 			return render(request,"content_detail.html",context)
@@ -1546,7 +1546,7 @@ def display_image_comments(request,pk,origin=None):
 	user_id = request.user.id
 	try:
 		photo = Link.objects.only('description','net_votes','image_file','id','delete_status','type_of_content','submitter',\
-			'expire_at','audience','comment_status').get(id=pk)
+			'expire_at','audience','comment_status','web_link').get(id=pk)
 	except Link.DoesNotExist:
 		context = {}
 		if user_id:
@@ -2051,10 +2051,13 @@ def upload_public_photo(request,*args,**kwargs):
 							return HttpResponse(json.dumps({'success':False,'message':reverse('public_photo_upload_denied')}),content_type='application/json',)
 						else:
 							return redirect('public_photo_upload_denied')
-					image_url = upload_image_to_s3(image_file, prefix='follower/', with_thumb=True)
+					################################################################################
+					# upload the image
+					image_alt_text, image_filename, add_to_sitemap = image_description_generator(caption=caption)
+					image_url = upload_image_to_s3(image_file, prefix='follower/', with_thumb=True, filename=image_filename)
 
 					post_data = {'ct':content_type,'aud':audience_type,'exp':expiry_type,'ein':expire_in,'d':caption,'iu':image_url,\
-					'com':coms,'ih':avghash}
+					'com':coms,'ih':avghash, 'alt':image_alt_text,'add_to_sitemap':add_to_sitemap}
 					set_temp_post_data(user_id=user_id,data=json.dumps(post_data),post_type='img',obj_id=None)
 
 					if audience_type == 's':
@@ -2110,6 +2113,11 @@ def upload_public_photo(request,*args,**kwargs):
 							activity_dict = {'m':'GET','act':'PL.u','t':time_now}# defines what activity just took place
 						log_user_activity.delay(user_id=own_id, activity_dict=activity_dict, time_now=time_now)
 					##################################################################
+					ttl, type_of_rate_limit = content_sharing_rate_limited(own_id)
+
+					if ttl:
+						context["ttl"] = ttl
+
 					context["show_instructions"] = True if tutorial_unseen(user_id=own_id, which_tut='26', renew_lease=True) else False
 					context["form"] = UploadPhotoForm()
 					secret_key = str(uuid.uuid4())
@@ -2732,6 +2740,7 @@ def publish_post(request):
 		audience, expiry, coms = temporarily_saved_data['aud'], temporarily_saved_data['exp'], temporarily_saved_data['com']
 		description, alignment = temporarily_saved_data['d'], temporarily_saved_data.get('a',None)
 		img_url, img_avghash = temporarily_saved_data.get('iu',None), temporarily_saved_data.get('ih',None) 
+		img_alt_text, add_img_to_sitemap = temporarily_saved_data.get('alt',''), temporarily_saved_data.get('add_to_sitemap',False)
 		img_height, img_width = temporarily_saved_data.get('img_height',None), temporarily_saved_data.get('img_width',None) 
 		content_type = temporarily_saved_data['ct'] 
 		topic_name, topic_url, topic_bg, topic_payload = temporarily_saved_data.get('tn',None), temporarily_saved_data.get('turl',None), \
@@ -2931,7 +2940,7 @@ def publish_post(request):
 
 			obj = Link.objects.create(image_file=img_url, submitter_id=own_id, description=description, is_visible=False,\
 				trending_status='0',comment_status=coms,delete_status='0',type_of_content='g',audience=audience,\
-				mortality=expiry,expire_at=expire_at)
+				mortality=expiry,expire_at=expire_at,web_link=img_alt_text)# web_link used as a store for image's 'alt' description
 
 			obj_id = obj.id
 			img_height, img_width = obj.image_file.height, obj.image_file.width
@@ -2940,6 +2949,9 @@ def publish_post(request):
 			if audience == 'p':
 				if expiry == 'i':
 					type_of_object = ('g','p','i')#'gai'
+					if add_img_to_sitemap:
+						# adding 'public' image to sitemap so that it can be indexed by crawlers
+						Cooldown.objects.create(content_id=obj_id, hot_score=int(time_now/604800))# 'hot_score' contains 'cohort number'
 				
 				elif expiry == 'm':
 					type_of_object = ('g','p','m')#'gam'
@@ -2984,7 +2996,7 @@ def publish_post(request):
 			obj_hash = add_image_post(obj_id=obj_id, categ='6', submitter_id=own_id, submitter_av_url=av_url, submitter_username=submitter_name, \
 				img_url=get_s3_object(img_url), is_star=is_star, img_caption=description, submission_time=time_now, from_fbs=on_fbs, \
 				type_of_object=type_of_object, add_to_photo_feed=add_to_photo_feed, poster_defined_expiry_time=expire_at, comments=coms, \
-				img_height=img_height, img_width=img_width)#type_of_object
+				img_height=img_height, img_width=img_width, alt_text=img_alt_text)#type_of_object
 
 			if post_to_all_followers:
 				# fan_out_to_followers(own_id,obj_hash,time_now,expire_at=expire_at,follower_list=None)
@@ -3005,27 +3017,16 @@ def publish_post(request):
 			rate_limit_content_sharing(own_id, set_long_ratelimit= add_to_photo_feed)#rate limiting for 5 mins (and hard limit set at 50 submissions per day)
 			
 			if add_to_photo_feed:
-				############################
-				# Used to determine when to send the image on 'home'
-				#TO DO: REMOVE THIS SNIPPET AND INSTEAD USE PEOPLE'S CONTENT REP TO POST ON HOME
-				recent_photo_ids = get_recent_photos(own_id)
-				total_score = 0
-				if recent_photo_ids:
-					vote_scores = Link.objects.filter(type_of_content='g',id__in=recent_photo_ids).values_list('net_votes',flat=True)
-					for vote_score in vote_scores:
-						total_score += vote_score
-
-				# since being posted to a 'public' feed, ensure some rate-limits and such are in place
-				############################
+				# since being posted to a 'public' feed, ensure basic anti-duplication measures are in place
 				insert_hash(obj_id, img_avghash)#disallowing duplication for 'public' audience type
-				save_recent_photo(own_id, obj_id)#saving 5 recent ones
-				############################
+				
+				# adding the image to some redis sets
+				save_recent_photo(user_id=own_id, photo_id=obj_id, time_now=time_now)
+
 				if on_fbs:
+					# prevent FBS users from rapidly uploading tons of images
 					rate_limit_fbs_public_photo_uploaders(own_id)
 
-			# NOT NEEDED ANYMORE SINCE ONLY LINK IS STORED IN TEMP DATA
-			# remove temp img stored in redis - we won't be deleting it since it's been propagated to followers/feeds
-			# remove_temp_img_from_redis(obj_id)
 			#######################################################################
 
 			################### Retention activity logging ###################
@@ -3587,11 +3588,11 @@ def retrieve_indexable_content_detail_list(cohort):
 	"""
 	Retreiving all content_ids belonging to a certain sitemap cohort
 	"""
-	trending_content_objs = Cooldown.objects.select_related('content__type_of_content').\
-	filter(hot_score=cohort).values_list('content_id','time_of_casting','content__type_of_content')
+	trending_content_objs = Cooldown.objects.select_related('content__image_file').\
+	filter(hot_score=cohort).values_list('content_id','time_of_casting','content__image_file')# web_link used as a store for image's 'alt' description
 	final_data = []
-	for content_id, time_of_casting, content_type in trending_content_objs:
-		final_data.append((content_id,time_of_casting.strftime("%Y-%m-%dT%I:%M:%S+00:00"),content_type))
+	for content_id, time_of_casting, image_url in trending_content_objs:
+		final_data.append((content_id,time_of_casting.strftime("%Y-%m-%dT%I:%M:%S+00:00"),'https:{}'.format(get_s3_object(image_url))))
 	return final_data
 
 

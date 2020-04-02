@@ -1,7 +1,5 @@
 import PIL
 from PIL import Image
-# from boto.s3.connection import S3Connection
-# from boto.s3.key import Key
 import uuid, StringIO, string, os, mimetypes
 from storages.backends.s3boto import S3BotoStorage
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -13,16 +11,16 @@ os.environ['S3_USE_SIGV4'] = 'True'
 
 
 
-def upload_image_to_s3(image, prefix='1-on-1/', with_thumb=False):
+def upload_image_to_s3(image, prefix='1-on-1/', with_thumb=False, filename=''):
 	"""
 	Used by views for 1on1 and mehfil photos
 
 	TODO: Can we store two objects together in one S3 POST request (e.g. a 'bulk_save' functionality)
 	"""
+	image_name_with_path = os.path.join(prefix, "%s.jpg" % filename) if filename else os.path.join(prefix, "%s.jpg" % uuid.uuid4())
+	s3_object = S3Storage()
 	if with_thumb:
-		image_name_with_path = os.path.join(prefix, "%s.jpg" % uuid.uuid4())
 		###########################################################
-		s3_object = S3Storage()
 		image_loc = s3_object._save(name=image_name_with_path, content=image)
 		###########################################################
 		thumb_name, thumb = get_thumb(image_name_with_path, image, prefix[:-1])
@@ -31,8 +29,6 @@ def upload_image_to_s3(image, prefix='1-on-1/', with_thumb=False):
 		###########################################################
 		return image_loc
 	else:
-		image_name_with_path = os.path.join(prefix, "%s.jpg" % uuid.uuid4())
-		s3_object = S3Storage()
 		return s3_object._save(name=image_name_with_path, content=image)
 
 

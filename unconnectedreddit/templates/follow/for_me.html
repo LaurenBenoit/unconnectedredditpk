@@ -82,7 +82,7 @@
 		<article class="mbl" style="display:block;overflow:hidden;background:white">
 			<a name="section{{ forloop.counter }}"></a>
 
-			{% photo_object pid=link.i ooid=link.si img_url=link.iu img_thumb=link.it caption=link.d|emoticons raw_caption=link.d origin=26 upload_time=link.t machine_time=link.mt oun=link.su av_url=link.sa vsc=link.nv is_fbs=on_fbs home_hash=link.h static_url=STATIC_URL is_star=link.s show_trending=link.tr lazyload_idx=forloop.counter ratio=link.rt ot=link.ot aud=link.aud exp=link.exp is_new=link.new  et=link.et time_now=time_now %}
+			{% photo_object pid=link.i ooid=link.si img_url=link.iu img_thumb=link.it caption=link.d|emoticons origin=26 upload_time=link.t machine_time=link.mt oun=link.su av_url=link.sa vsc=link.nv is_fbs=on_fbs home_hash=link.h static_url=STATIC_URL is_star=link.s show_trending=link.tr lazyload_idx=forloop.counter ratio=link.rt ot=link.ot aud=link.aud exp=link.exp is_new=link.new  et=link.et time_now=time_now alt_txt=link.alt %}
 			
 			<section class="mbl" style="display:block">
 			<div style="flex-wrap:wrap" class="fx fxjscn fxaicn cxs sp cgy">
@@ -102,7 +102,7 @@
 					{% big_external_share_button owner_username=link.su on_opera=on_opera photo_id=link.i origin=origin static_url=STATIC_URL %}
 					{% include "big_buttons/big_delete_button.html" with own_id=ident origin=origin obj_hash=link.h static_url=STATIC_URL %}
 					{% include "big_buttons/big_report_button.html" with origin=origin pid=link.i oun=link.su ooid=link.si img_thumb=link.it raw_caption=link.d av_url=link.sa home_hash=link.h static_url=STATIC_URL type='img' %}
-
+					
 				{% endif %}
 			</div>
 			</section>
