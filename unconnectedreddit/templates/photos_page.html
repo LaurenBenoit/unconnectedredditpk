@@ -100,10 +100,29 @@
 
 		{% elif forloop.counter == 4 %}
 
-			<div class="mbl" style="display:block;overflow:hidden;background:tomato;text-align:center;overflow:hidden">
-				<img class="mts" src="{{ STATIC_URL }}img/mask.svg" width="50" height="50" style="width:50px;height:50px">
-				<div class="mbs cxl lsp" style="color:black"><b>Corona Virus zaruri malumat</b></div>
-				<a href="{% url 'corona_virus' %}#section0"><button class="cs lsp sp" style="width:100%;border-radius:0;border:none;background-image: linear-gradient(to right, #50C9C3 0%, #96DEDA 51%, #50C9C3 100%);color:#000;height:40px"><b>PRESS HERE</b></button></a>
+			<div class="mbl" style="display:block;overflow:hidden;background-color:#16161D;text-align:center;overflow:hidden">
+				<div class="mbs mts cxl sp lsp" style="color:whitesmoke"><b>Corona Virus Alert!</b></div>
+				<div class="fx fxaicn">
+					<a href="{% url 'corona_virus' %}#section0" style="width:50%"><button class="cs lsp sp pg_ok_res" style="width:100%;border-radius:0;border:none;background-color:#11FFBD;background-image: linear-gradient(to right, #AAFFA9 0%, #11FFBD 51%, #AAFFA9 100%);color:#000;height:70px">
+						<div class="fx fxjscn fxaicn">
+							<div class="mrl"><img class="mts mbs" src="{{ STATIC_URL }}img/virus.svg" width="40" height="40" style="width:40px;height:40px"></div>
+							<b style="text-align:left">
+								<div>ZAROORI</div>
+								<div class="mt">MALUMAT</div>
+							</b>
+						</div>
+					</button></a>
+
+					<a href="{% url 'corona_virus_management' %}#section0" style="width:50%"><button class="cs lsp sp pg_ok_res" style="width:100%;border-radius:0;border:none;background-color:#ee9ca7;background-image: linear-gradient(to right, #ff99cc 0%, #ee9ca7 51%, #ff99cc 100%);color:#000;height:70px">
+						<div class="fx fxjscn fxaicn">
+							<div class="mrl"><img class="mts mbs" src="{{ STATIC_URL }}img/mask.svg" width="40" height="40" style="width:40px;height:40px"></div>
+							<b style="text-align:left">
+								<div>CORONA</div>
+								<div class="mt">KA ILAAJ</div>
+							</b>
+						</div>
+					</button></a>
+				</div>
 			</div>
 
 		{% endif %}

@@ -700,6 +700,15 @@ def survey(request):
 ##############################################################################################
 ##############################################################################################
 
+def corona_virus_management(request, lang=None):
+	"""
+	Renders an info page about COVID-19
+	"""
+	if lang=='ur':
+		return render(request,"announcement/corona2_ur.html",{})
+	else:
+		return render(request,"announcement/corona2.html",{})
+
 
 def corona_virus(request, lang=None):
 	"""

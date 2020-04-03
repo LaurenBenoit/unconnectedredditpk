@@ -28,7 +28,7 @@ reset_password, content_detail_view, display_text_comments, manage_user, manage_
 hell_ban, remove_hell_ban,photo_top_trenders, user_profile_photos, missing_page, hide_jawab,photo_page, photo_redirect, \
 upload_public_photo, website_rules, redirect_to_profile_photos,public_photo_upload_denied, user_profile_photos_redirect, \
 display_old_image_comments, content_sitemap_of_sitemaps, private_or_expired, photo_detail_view, content_sitemap, kick_ban_user,\
-show_templates, more_options
+show_templates, more_options#, share_video
 from links.views import FacesHelpView, UserActivityView, AboutView, ContactView, PrivacyPolicyView, PhotosHelpView, \
 EmoticonsHelpView, LogoutHelpView, WelcomeView, WelcomeMessageView, LogoutPenaltyView, UserSettingsEditView, \
 UserProfileDetailView, UserProfileEditView, LinkDeleteView, HelpView, PhotoShareView, RegisterHelpView, VerifyHelpView, \
@@ -36,7 +36,7 @@ HistoryHelpView
 from links.redirection_views import redirect_to_content, main_navbar
 from links.number_verification import verify_user_number
 from links.voting_views import user_vote_history, user_old_vote_history
-from links.announcement_views import export_survey_results, corona_virus, benefits_of_data_mode#, survey
+from links.announcement_views import export_survey_results, benefits_of_data_mode, corona_virus, corona_virus_management#, survey
 
 admin.autodiscover()
 
@@ -127,6 +127,7 @@ urlpatterns = patterns('',
 	url(r'^share/text/$', auth(submit_text_post), name='link_create'),
 	url(r'^share/text/redirect/$', auth(link_create_pk), name='link_create_pk'),
 	url(r'^share/text/redirect/first-time/$', auth(link_create_pk), name='first_time_link'),
+	# url(r'^share/video/$', auth(share_video), name='share_video'),
 	############################################################################################################################
 	url(r'^photos_help/(?P<slug>[\w.@+-]+)/(?P<pk>\d+)/$', PhotosHelpView.as_view(), name='photos_help'),
 	url(r'^khushamdeed/$', auth(WelcomeView.as_view()), name='welcome'),
@@ -167,6 +168,8 @@ urlpatterns = patterns('',
 	url(r'^survey/export/$', auth(export_survey_results), name='export_survey_results'),
 	url(r'^corona-virus/$', corona_virus, name='corona_virus'),
 	url(r'^corona-virus/(?P<lang>[\w.@+-]+)/$', corona_virus, name='corona_virus'),
+	url(r'^surviving-corona/$', corona_virus_management, name='corona_virus_management'),
+	url(r'^surviving-corona/(?P<lang>[\w.@+-]+)/$', corona_virus_management, name='corona_virus_management'),
 	url(r'^announcement/data-mode/$', benefits_of_data_mode, name='benefits_of_data_mode'),
 		############################# Permanent redirects ############################################
 	url(r'^freshphotos/$', auth(fresh_photos_list), name='fresh_photos_list'),
