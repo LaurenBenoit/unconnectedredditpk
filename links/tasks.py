@@ -33,10 +33,10 @@ retrieve_all_member_ids, group_owner_administrative_interest, hide_direct_respon
 from redis7 import log_like, retrieve_obj_feed, add_obj_to_home_feed, get_photo_feed, add_photos_to_best_photo_feed, retrieve_text_obj_scores,\
 insert_hash, retrieve_all_home_text_obj_names, delete_temporarily_saved_content_details, cleanse_inactive_complainers, account_created, set_top_stars, \
 add_posts_to_best_posts_feed, add_single_trending_object, trim_expired_user_submissions, select_hand_picked_obj_for_trending,retire_abandoned_topics,\
-queue_obj_into_trending, in_defenders, remove_obj_from_trending, calculate_top_trenders, calculate_bayesian_affinity, cleanse_voting_records, \
-study_voting_preferences,retrieve_img_obj_scores, add_single_trending_object_in_feed, cache_detailed_voting_data, cache_old_detailed_voting_data,\
-get_best_home_feed, create_sybil_relationship_log, set_best_photo_for_fb_fan_page, can_post_image_on_fb_fan_page, archive_closed_objs_and_votes, \
-hide_inline_direct_response
+queue_obj_into_trending, in_defenders, remove_obj_from_trending, calculate_top_trenders, calculate_trender_score, calculate_bayesian_affinity, \
+cleanse_voting_records, study_voting_preferences,retrieve_img_obj_scores, add_single_trending_object_in_feed, cache_detailed_voting_data, \
+cache_old_detailed_voting_data, get_best_home_feed, create_sybil_relationship_log, set_best_photo_for_fb_fan_page, can_post_image_on_fb_fan_page, \
+archive_closed_objs_and_votes, hide_inline_direct_response
 from redis9 import delete_all_direct_responses_between_two_users, cleanse_direct_response_list, submit_direct_response, set_comment_history, \
 delete_single_direct_response, hide_direct_response_in_inbox, modify_direct_response_objs, log_direct_response_metrics, log_location_for_sender,\
 delete_direct_responses_upon_obj_deletion, cleanse_replier_data_from_location, cleanse_replier_history_when_pvp_blocked, remove_1on1_direct_responses,\
@@ -687,6 +687,9 @@ def public_group_ranking_clean_up_task():
 	Mislabeled task due to legacy reasons
 	"""
 	calculate_top_trenders()
+	###############################
+	# giving each 'star' a score depending on ratio of pics in trending and recency of uploaded trending images
+	calculate_trender_score()
 
 
 @celery_app1.task(name='tasks.log_group_owner_interaction')

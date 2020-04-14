@@ -167,6 +167,8 @@ REMOVAL_RATE_LIMIT = 'rrl:'# rate limit key to limit rate of 'remove' commands a
 
 GLOBAL_UPLOADED_IMGS = 'gui'
 
+STAR_SCORE = 'star_score'
+
 ##################################################################################################################
 ################################# Detecting duplicate images post in public photos ###############################
 ##################################################################################################################
@@ -1796,6 +1798,181 @@ def retrieve_handpicked_photos_count():
 		return count
 	else:
 		return 0
+
+
+def retrieve_trenders_by_score():
+	"""
+	Retrieves top stars sorted by score calculated in calculate_trender_score()
+	"""
+	return redis.Redis(connection_pool=POOL).zrevrange(STAR_SCORE,0,-1)
+
+
+def calculate_trender_score():
+	"""
+	Provides a 'score' for trenders - in order to rank them in the 'star list'
+
+	'trending hit rate': num_trending_in_1_week / total_submitted_in_1_week
+	'recency bonus': give a small 'boost' if most of the trending images were recent (i.e. within the past 3 days)
+	"""
+	user_ids = get_all_image_star_ids()# retrieve all star_ids
+	if user_ids:
+		from datetime import datetime, timedelta
+
+		hit_rates = {}
+		time_now = datetime.utcnow()
+		one_week_ago = time_now-timedelta(days=7)
+		image_data = Link.objects.filter(submitter_id__in=user_ids,submitted_on__gte=one_week_ago).\
+		values_list('submitter_id','submitted_on','trending_status')
+		
+		if image_data:
+			# defaultdict(int) is a python dictionary that doesn't give KeyError if 'key' doesn't exist (when dict is accessed)
+			total_submissions_dict = defaultdict(int)# contains total images uploaded by a trender_id in last 7 days(trending and non-trending)
+			trending_submissions_dict = defaultdict(int)# contains trending images uploaded by a trender_id in last 7 days
+			num_trending_in_interval_one = defaultdict(int)# last 24 hours time window
+			num_trending_in_interval_two = defaultdict(int)# last 24-48 hours time window
+			num_trending_in_interval_three = defaultdict(int)# last 48-72 hours time window
+			one_day_ago = time_now-timedelta(days=1)
+			two_days_ago = time_now-timedelta(days=2)
+			three_days_ago = time_now-timedelta(days=3)
+			for image_tup in image_data:
+				submitter_id, submitted_on, trending_status = image_tup[0], image_tup[1], image_tup[2]
+				###########################################
+				# gathering data for 'trending hit rate'
+				total_submissions_dict[submitter_id] += 1
+				if trending_status == '1':
+					trending_submissions_dict[submitter_id] += 1
+					###########################################
+					# gathering data for 'recency bonus'
+					if submitted_on >= one_day_ago:
+						num_trending_in_interval_one[submitter_id] += 1
+					elif submitted_on >= two_days_ago:
+						num_trending_in_interval_two[submitter_id] += 1
+					elif submitted_on >= three_days_ago:
+						num_trending_in_interval_three[submitter_id] += 1
+					else:
+						# not eligible for bonus
+						pass
+
+			################################
+			trender_ids = map(int, user_ids)
+			for trender_id in trender_ids:
+
+				total_submissions = total_submissions_dict.get(trender_id,0)
+				total_trending = trending_submissions_dict.get(trender_id,0)
+
+				# calculate the 'hit rate' of the trender
+				hit_rate = (total_trending*1.0)/total_submissions if total_submissions else 0
+				
+				# eligible for a boost? calculate it
+				trending_count_in_interval_one = num_trending_in_interval_one.get(trender_id,0)
+				trending_count_in_interval_two = num_trending_in_interval_two.get(trender_id,0)
+				trending_count_in_interval_three = num_trending_in_interval_three.get(trender_id,0)
+
+				# has a trending image in: each of the previous 3 time intervals
+				if trending_count_in_interval_one and trending_count_in_interval_two and trending_count_in_interval_three:
+					weight_of_recent_trending = ((trending_count_in_interval_one+trending_count_in_interval_two+trending_count_in_interval_three)*1.0)/total_trending
+					
+					# most trending contributions came recently - the user is an active contributor
+					if weight_of_recent_trending > 0.50:
+						# give max boost available for this tier
+						boost = 0.2 * hit_rate
+					else:
+						# give boost
+						boost = 0.2 * hit_rate * (weight_of_recent_trending*2)
+
+				# has a trending image in: the most recent two time intervals
+				elif trending_count_in_interval_one and trending_count_in_interval_two:
+					weight_of_recent_trending = ((trending_count_in_interval_one+trending_count_in_interval_two)*1.0)/total_trending
+
+					# most trending contributions came recently - the user is an active contributor
+					if weight_of_recent_trending > 0.30:
+						# give max boost available for this tier
+						boost = 0.15 * hit_rate
+					else:
+						# give boost
+						boost = 0.15 * hit_rate * (weight_of_recent_trending*1.5)
+
+				# has a trending image in: time interval one (0-24hrs) and time interval three (48-72 hrs)
+				elif trending_count_in_interval_one and trending_count_in_interval_three:
+					weight_of_recent_trending = ((trending_count_in_interval_one+trending_count_in_interval_three)*1.0)/total_trending
+
+					# most trending contributions came recently - the user is an active contributor
+					if weight_of_recent_trending > 0.30:
+						# give max boost available for this tier
+						boost = 0.10 * hit_rate
+					else:
+						# give boost
+						boost = 0.10 * hit_rate * (weight_of_recent_trending*1.5)
+
+				# has a trending image in: time interval one (0-24hrs) only
+				elif trending_count_in_interval_one:
+					weight_of_recent_trending = (trending_count_in_interval_one*1.0)/total_trending
+
+					# most trending contributions came recently - the user is an active contributor
+					if weight_of_recent_trending > 0.15:
+						# give max boost available for this tier
+						boost = 0.07 * hit_rate
+					else:
+						# give boost
+						boost = 0.07 * hit_rate * (weight_of_recent_trending*3)
+
+				# has a trending image in: time interval two (24-48hrs) and time interval three (48-72 hrs)
+				elif trending_count_in_interval_two and trending_count_in_interval_three:
+					weight_of_recent_trending = ((trending_count_in_interval_two+trending_count_in_interval_three)*1.0)/total_trending
+					
+					# most trending contributions came recently - the user is an active contributor
+					if weight_of_recent_trending > 0.30:
+						# give max boost available for this tier
+						boost = 0.06 * hit_rate
+					else:
+						# give boost
+						boost = 0.06 * hit_rate * (weight_of_recent_trending*1.5)
+
+				# has a trending image in: time interval two (24-48hrs) one
+				elif trending_count_in_interval_two:
+					weight_of_recent_trending = (trending_count_in_interval_two*1.0)/total_trending
+
+					# most trending contributions came recently - the user is an active contributor
+					if weight_of_recent_trending > 0.15:
+						# give max boost available for this tier
+						boost = 0.045 * hit_rate
+					else:
+						# give boost
+						boost = 0.045 * hit_rate * (weight_of_recent_trending*3)
+
+				# has a trending image in: time interval three (48-72hrs) one
+				elif trending_count_in_interval_three:
+					weight_of_recent_trending = (trending_count_in_interval_three*1.0)/total_trending
+
+					# most trending contributions came recently - the user is an active contributor
+					if weight_of_recent_trending > 0.15:
+						# give max boost available for this tier
+						boost = 0.03 * hit_rate
+					else:
+						# give boost
+						boost = 0.03 * hit_rate * (weight_of_recent_trending*3)
+
+				# has no trending images in the most recent 3 time intervals
+				else:
+					boost = 0
+
+				########################################
+
+				hit_rates[trender_id] = hit_rate+boost
+
+	# return hit_rates
+
+	############ saving result in redis
+	final_scores = []
+	for key, value in hit_rates.iteritems():
+		final_scores.append(key)
+		final_scores.append(value)
+
+	if final_scores:
+		my_server = redis.Redis(connection_pool=POOL)
+		my_server.delete(STAR_SCORE)
+		my_server.zadd(STAR_SCORE,*final_scores)
+
 
 
 def calculate_top_trenders():

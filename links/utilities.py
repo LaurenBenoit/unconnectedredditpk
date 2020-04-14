@@ -83,7 +83,7 @@ def image_description_generator(caption):
 		or unicode("😄", "utf-8") in caption_lower or ":d" in caption_lower or ".a5" in caption_lower \
 		or ".c1" in caption_lower or ".c5" in caption_lower or ".b1" in caption_lower \
 		or ".b3" in caption_lower or ".d2" in caption_lower or ".d1" in caption_lower \
-		or ".d3" in caption_lower:
+		or ".d3" in caption_lower or ".c6" in caption_lower:
 			if "corona" in caption_lower or "carona" in caption_lower or "crona" in caption_lower or "caroona" in caption_lower \
 			or "krona" in caption_lower:
 				image_alt_text = 'Corona meme, carona meme, coronavirus meme, corona joke'

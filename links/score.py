@@ -11,6 +11,8 @@ PUBLIC_TEXT_QUALITY_THRESHOLD_LENGTH = 40# text-length below which a public text
 PREFIX_TEXT_LENGTH = 43# useful when splitting a sentence into prefix and postfix parts (for 'reference' display)
 NUM_ACTIVITY_ITEMS_PER_PAGE = 10# num items to be shown in reply history
 ###############################################################################################################
+COMPETITION_ROUND = '1'# control competition rounds from here
+###############################################################################################################
 VOTING_CLOSED_ARCHIVE_OVERFLOW_TIME = 2419200# i.e. 28 days. This is the amount of time closed-voting objs are kept around for 'like_prob' or 'handpicked_prob' analysis
 ################################################ Follow Feature Related Variables ##################################
 REMOVAL_RATE_LIMIT_TIME = 300# 5 mins in seconds

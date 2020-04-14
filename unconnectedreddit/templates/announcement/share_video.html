@@ -1,0 +1,80 @@
+{% extends "base/base_noindex.html" %}
+{% block content %}
+
+<h1 class="cxl lsp" style="text-align:center;font-weight:400;padding:4px 8px;">Submit your video</h1>
+
+{% if not form.youtube_url.errors and not form.phonenumber.errors %}
+<main class="bx" style="background:white;margin-right:auto;margin-left:auto;max-width:700px;display:block;padding:4px 8px;overflow:hidden">
+
+	<div class="mts cxl lsp" style="text-align:center;font-weight:bold">Video requirements:</div>
+
+	<div class="cl mts sp lsp fx fxjsfs fxaicn">
+		<div class="mrs">
+			<svg width="40px" height="40px"><use xlink:href="{{ STATIC_URL }}img/spritesheets/video_requirements.svg#youtube"></use></svg>
+		</div>
+		<div>30-45 seconds ki video bnain. Usko YouTube pe upload kar ke link neechay submit karein</div>
+	</div>
+
+	<div class="mtl cl sp lsp fx fxjsfs fxaicn"> 
+		<div class="mrs"><svg width="40px" height="40px"><use xlink:href="{{ STATIC_URL }}img/spritesheets/video_requirements.svg#laugh"></use></svg></div>
+		<div>Video mein "Comedy" honi chahiye. Maslan "Prank", "Skit", "Parody", "Roasting" waghera</div>
+	</div>
+
+	<div class="mtl cl sp lsp fx fxjsfs fxaicn"> 
+		<div class="mrs"><svg width="40px" height="40px"><use xlink:href="{{ STATIC_URL }}img/spritesheets/video_requirements.svg#hashtag"></use></svg></div>
+		<div>YouTube pe video ka name ye rakhein: <b>#Damadam comedy by <span style="overflow-wrap:anywhere;display:inline-block;">{{ nickname }}</span></b></div>
+	</div>
+
+	<div class="mtl cl sp lsp fx fxjsfs fxaicn"> 
+		<div class="mrs"><svg width="40px" height="40px"><use xlink:href="{{ STATIC_URL }}img/spritesheets/video_requirements.svg#person"></use></svg></div>
+		<div>Video mein apka khud hona lazmi hai, sirf apki voice nahi</div>
+	</div>
+
+	<div class="mtl cl sp lsp fx fxjsfs fxaicn"> 
+		<div class="mrs"><svg width="40px" height="40px"><use xlink:href="{{ STATIC_URL }}img/spritesheets/video_requirements.svg#5secs"></use></svg></div>
+		<div>Pehle 5 seconds mein apna taruf karwain Damadam ID name lekr</div>
+	</div>
+
+	<div class="mtl mbs cl sp lsp fx fxjsfs fxaicn"> 
+		<div class="mrs"><svg width="40px" height="40px"><use xlink:href="{{ STATIC_URL }}img/spritesheets/video_requirements.svg#video"></use></svg></div>
+		<div>Video fresh banani hai. Purani video submit nahi karein</div>
+	</div>
+
+	<div class="cs mbl sp lsp cgy">NOTE: tamam requirements poori karein. Apki video select honay ke chances barhein ge</div>
+
+</main>
+
+<main style="margin-right:auto;margin-left:auto;max-width:700px;display:block;overflow:hidden">
+	<a href="{% url 'youtube_uploading_help' %}"><button style="text-align:center;padding:7px;color:white;border:none;border-radius:0;margin:0;border-bottom:1px solid #e2ddbf;width:100%;background:#dd523c" class="pg_ok_res cxs sp"><b>HELP&nbsp;►&nbsp;HOW TO UPLOAD VIDEO ON YOUTUBE</b></button></a>
+</main>
+{% endif %}
+
+<main class="bx mbl" style="background:gainsboro;border-top:1px solid gainsboro;text-align:center;margin-right:auto;margin-left:auto;max-width:700px;display:block;padding:4px 8px;overflow:hidden">
+
+	{% if already_entered %}
+
+		<div class="cxl mts mbl lsp"><b>Apki janib se submission jama ho chuki hai. Result ka intezar karein!</b></div>
+
+	{% else %}
+
+		<form class="mbl" method="POST" action="{% url 'share_video' %}">
+			{% csrf_token %}
+
+			{% if form.youtube_url.errors %}<div style="font-weight:bold" class="mtl sp cr">{{ form.youtube_url.errors.0 }}</div>{% else %}<div style="font-weight:bold;color:#000" class="mtl sp">YouTube Video Link:</div>{% endif %}
+			{{ form.youtube_url }}
+
+			{% if form.phonenumber.errors %}<div style="font-weight:bold" class="mtl sp cr">{{ form.phonenumber.errors.0 }}</div>{% else %}<div style="font-weight:bold;color:#000" class="mtl sp">Your Mobile Number (optional):</div>{% endif %}
+			{{ form.phonenumber }}
+			<div style="width:90%;max-width:360px;margin-left:auto;margin-right:auto" class="cs sp mt mbs clb">NOTE: Agr aap select huay tou apko SMS aye ga (no calls)</div>
+			
+			<div class="mtl" style="text-align:center">
+				<button type="submit" style="border-top-right-radius:45px;border-bottom-right-radius:45px;border-top-left-radius:45px;border-bottom-left-radius:45px;border:none;width:280px;height:60px;background: linear-gradient(-45deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%)" class="pg_ok_res bx cxl clw sp">SUBMIT</button>
+			</div>
+
+		</form>
+
+	{% endif %}
+
+</main>
+<br><br>
+{% endblock %}

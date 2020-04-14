@@ -1,0 +1,60 @@
+{% extends "base/base_noindex.html" %}
+{% block content %}
+
+<h1 class="cxl lsp" style="text-align:center;font-weight:400;padding:4px 8px;">Talent promote karney ke liye Damadam pe video competition start ho raha hai</h1>
+
+<main class="mbl" style="background:white;margin-right:auto;margin-left:auto;max-width:700px;display:block;padding:4px 8px;">
+
+	<div class="mts cxl lsp" style="text-align:center;font-weight:bold">How it works:</div>
+
+	<div class="cl mts sp lsp fx fxjsfs fxaicn"> 
+		<div class="bx" style="height:50px;width:50px;min-width:50px;border-radius:6px;font-size:30px;font-weight:bold;text-align:center;line-height: 50px;margin-right:8px;background-color: #cfd6e6;background-image: linear-gradient(315deg, #e7eff9 0%, #cfd6e6 74%);color:white">1</div>
+		<div>Apni video bnain aur humain submit karein</div>
+	</div>
+
+	<div class="mtl cl sp lsp fx fxjsfs fxaicn"> 
+		<div class="bx" style="height:50px;width:50px;min-width:50px;border-radius:6px;font-size:30px;font-weight:bold;text-align:center;line-height: 50px;margin-right:8px;background-color: #cfd6e6;background-image: linear-gradient(315deg, #e7eff9 0%, #cfd6e6 74%);color:white">2</div>
+		<div>Damadam best videos ko select karey ga</div>
+	</div>
+
+	<div class="mtl cl sp lsp fx fxjsfs fxaicn"> 
+		<div class="bx" style="height:50px;width:50px;min-width:50px;border-radius:6px;font-size:30px;font-weight:bold;text-align:center;line-height: 50px;margin-right:8px;background-color: #cfd6e6;background-image: linear-gradient(315deg, #e7eff9 0%, #cfd6e6 74%);color:white">3</div>
+		<div>Selected videos tamam users ko dikhae jaen gi</div>
+	</div>
+
+	<div class="mtl cl sp lsp fx fxjsfs fxaicn"> 
+		<div class="bx" style="height:50px;width:50px;min-width:50px;border-radius:6px;font-size:30px;font-weight:bold;text-align:center;line-height: 50px;margin-right:8px;background-color: #cfd6e6;background-image: linear-gradient(315deg, #e7eff9 0%, #cfd6e6 74%);color:white">4</div>
+		<div>Users videos ki judging karein ge aur eliminations hon gi</div>
+	</div>
+
+	<div class="mtl cl sp lsp fx fxjsfs fxaicn"> 
+		<div class="bx" style="height:50px;width:50px;min-width:50px;border-radius:6px;font-size:30px;font-weight:bold;text-align:center;line-height: 50px;margin-right:8px;background-color: #cfd6e6;background-image: linear-gradient(315deg, #e7eff9 0%, #cfd6e6 74%);color:white">5</div>
+		<div>Phir agla round shuru hoga. Participants new videos dein ge</div>
+	</div>
+
+	<div class="mtl mbl cl sp lsp fx fxjsfs fxaicn"> 
+		<div class="bx" style="height:50px;width:50px;min-width:50px;border-radius:6px;font-size:30px;font-weight:bold;text-align:center;line-height: 50px;margin-right:8px;background-color: #cfd6e6;background-image: linear-gradient(315deg, #e7eff9 0%, #cfd6e6 74%);color:white">6</div>
+		<div>Akhir mein winner decide hoga. Winner ko <img src="{{ STATIC_URL }}img/star.svg" width="16" height="16" style="height:16px;width:16px">&nbsp;<b>Gold&nbsp;Star</b> miley ga</div>
+	</div>
+
+	<div class="cgy sp lsp" style="text-align:center;font-size:90%">NOTE: Winner ki announcement Damadam ke tamam users ke samney ki jaye gi</div>
+
+	<div class="mbl mtl" style="text-align:center">
+		<a href="{% url 'share_video' %}#section0" class="mbl">
+			<button style="border-top-right-radius:45px;border-bottom-right-radius:45px;border-top-left-radius:45px;border-bottom-left-radius:45px;border:none;width:280px;height:90px;background: linear-gradient(-45deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%);" class="pg_ok_res bx">
+				<div class="fx fxjsfs fxaicn">
+					<img src="{{ STATIC_URL }}img/temp.svg" width="45" height="45" style="padding-left:45px">
+					<div class="clw lsp" style="padding-left:20px;text-align:left">
+						<div class="cxl">Submit Video</div>
+						<div class="cm sp">press here</div>
+					</div>
+				</div>
+			</button>
+		</a>
+	</div>
+
+	<svg width="0px" height="0px"><use xlink:href="{{ STATIC_URL }}img/spritesheets/video_requirements.svg#video"></use></svg>
+	
+</main>
+<br><br>
+{% endblock %}

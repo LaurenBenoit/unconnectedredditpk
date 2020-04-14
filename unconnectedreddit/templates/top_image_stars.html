@@ -1,0 +1,40 @@
+{% extends "base/base_stars.html" %}
+{% block content %}
+
+<head><title>Stars | Damadam</title></head>
+
+<h1 style="text-align:center" class="cxl lsp clb">Top Damadam <img src="{{ STATIC_URL }}img/gstar.svg" width="18" height="18" alt="*" > Stars:</h1>
+
+<div class="mbl clb" style="overflow:hidden;background:white;margin-right: auto;margin-left: auto;max-width:600px">
+
+    <div style="text-align:center" class="fx fxjscn fxaicn">
+        <div class="sp" style="border-radius:0;width:50%;border:none;background:#ff5849;color:white;height:40px;line-height:40px;font-weight:bold;border-bottom:1px solid #ff1500">TOP STARS</div>
+        <a href="{% url 'top_photo_help' %}" class="sp" style="width:50%"><button class="wt" style="border-radius:0;border:none;color:#71adf0;height:40px;font-weight:bold;width:100%;border-bottom:1px solid #dcdcdc;">BE A STAR</button></a>
+    </div>
+
+
+    <div class="mt" style="text-align:center;padding:0 7px">
+        <div class="mtl mbl cs cr sp lsp">Users with most trending posts (last 7 days)</div>
+
+        <!--  -->
+        {% load s3 %}
+		<ul style="display:inline-block;padding: 0;list-style:none;margin-top:0px">
+		       
+		{% for trender_id, username, aurl, can_follow in final_data %}
+		<div class="lsp" style="text-align:left;padding-bottom:10px;border-bottom:2px">       
+		    <span class="cgy cs sp">{{ forloop.counter }}.</span>&nbsp;<img src="{{ aurl|s3:"thumb" }}" width="22" height="22" class="circle" style="vertical-align:sub" alt="pic">&nbsp;<b class='sp cl'><bdi >{{ username }}</bdi></b>
+		    <div style="flex-wrap:wrap" class="mtl fx fxjscn fxaicn cxs sp cgy">
+		        <div style="margin-right:4px;margin-bottom:4px">{% include "big_buttons/big_search_buttons.html" with username=username static_url=STATIC_URL %}</div>
+		        {% if ident != trender_id %}{% include "big_buttons/big_sub_button.html" with is_subbed=can_follow username=username tid=trender_id origin='37' obid='' obh='' static_url=STATIC_URL %}{% endif %}
+		    </div>
+		</div>
+		{% endfor %}
+		</ul>
+		<!--  -->
+
+    </div>
+</div>
+
+<br><br>
+{% include "transparent_buttons_js_helper.html" with ident=ident static_url=STATIC_URL %}
+{% endblock %}

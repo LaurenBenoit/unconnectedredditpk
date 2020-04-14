@@ -72,8 +72,8 @@ add_image_post, insert_hash, is_fbs_user_rate_limited_from_photo_upload, in_defe
 rate_limit_fbs_public_photo_uploaders, check_content_and_voting_ban, get_temp_post_data, get_all_image_star_ids, get_best_home_feed,\
 invalidate_cached_public_replies, retrieve_cached_public_replies, cache_public_replies,retrieve_home_feed_index, retrieve_best_home_feed_index,\
 retrieve_trending_photo_ids, retrieve_num_trending_photos, retrieve_subscribed_topics, retrieve_photo_feed_latest_mod_time, add_topic_post, \
-get_recent_trending_photos, cache_recent_trending_images, get_cached_recent_trending_images, retrieve_last_vote_time, retrieve_top_stars, \
-is_image_star, retreive_trending_rep, log_recent_text,set_temp_post_data, retrieve_fresh_image_count, save_recent_photo
+get_recent_trending_photos, cache_recent_trending_images, get_cached_recent_trending_images, retrieve_last_vote_time, retreive_trending_rep, \
+is_image_star, log_recent_text,set_temp_post_data, retrieve_fresh_image_count, save_recent_photo, retrieve_trenders_by_score
 from redis2 import filter_following, check_if_follower, get_verified_follower_count, followers_exist, get_following_count, retrieve_follower_data, \
 fan_out_to_followers, can_follower_view_post, invalidate_cached_user_feed_history, get_last_post_selected_followers, get_all_follower_count#, logging_post_data
 from utilities import beautiful_date, convert_to_epoch, image_description_generator
@@ -1396,6 +1396,28 @@ def reauth(request, *args, **kwargs):
 				return render(request, 'change_password/reauth.html', {'form':ReauthForm()})
 
 ############################################################################################################
+
+def top_star_list(request):
+	"""
+	"""
+	from redis4 import retrieve_bulk_credentials
+
+	final_data = []
+	own_id = request.user.id
+	trender_ids = retrieve_trenders_by_score()
+	ids_already_fanned = filter_following(trender_ids,own_id)
+	trender_credential_dict = retrieve_bulk_credentials(trender_ids,decode_unames=False)
+	trender_ids = map(int,trender_ids)
+
+	for trender_id in trender_ids:
+		username = trender_credential_dict[trender_id]['uname']
+		av_url = trender_credential_dict[trender_id]['avurl']
+		if trender_id in ids_already_fanned:
+			final_data.append((trender_id, username, av_url, False))# 'False' means user cannot follow this person (because already following)
+		else:
+			final_data.append((trender_id, username, av_url, True))# 'True' means user can follow this person
+
+	return render(request,"top_image_stars.html",{'final_data':final_data, 'ident':own_id})
 
 
 def photo_top_trenders(request):
