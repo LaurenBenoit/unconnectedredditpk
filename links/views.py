@@ -589,6 +589,7 @@ def content_detail_view(request, pk, origin=None, obj_type=None):
 		try:
 			obj = Link.objects.only('description','net_votes','image_file','id','delete_status','submitter','expire_at',\
 				'audience','type_of_content','submitted_on','reply_count','comment_status','web_link').get(id=pk)
+
 		except Link.DoesNotExist:
 			context["absent"] = True
 			return render(request,"content_detail.html",context)
@@ -604,7 +605,20 @@ def content_detail_view(request, pk, origin=None, obj_type=None):
 
 		if viewable_flag == '0':
 			return redirect('private_or_expired')
+		elif not own_id and viewable_flag in ('1','2'):
+			# unauth user wants to view a post which is Google indexed but hidden ('1') or expired ('2'): show the image (without the uploader name)
+			request.session['image_file'] = obj.image_file
+			request.session['image_caption'] = obj.description
+			request.session['alt_text'] = obj.web_link
+			img_height, img_width = get_cached_photo_dim(pk)
+			if not img_height:
+				img_height, img_width = obj.image_file.height, obj.image_file.width
+				cache_photo_dim(pk,img_height,img_width)
+			img_hw_ratio = (1.0*int(img_width)/int(img_height))
+			request.session["img_ratio"] = round((100.0/img_hw_ratio),2)
+			return redirect("photo",list_type='best-list')
 		else:
+			# post is viewable ('3')
 			on_fbs = request.META.get('HTTP_X_IORG_FBS',False)
 			context = {'obj_id':pk, 'privacy_setting':privacy_setting, 'obj':obj, 'is_owner':False,'viewable_status':viewable_flag,\
 			'on_fbs':on_fbs,'submitter_username':retrieve_uname(submitter_id,decode=True)}
@@ -660,7 +674,8 @@ def content_detail_view(request, pk, origin=None, obj_type=None):
 					act = 'Z8' if request.mobile_verified else 'Z8.u'
 					activity_dict = {'m':'GET','act':act,'t':time_now}# defines what activity just took place
 					log_user_activity.delay(user_id=user_id, activity_dict=activity_dict, time_now=time_now)
-				##################################################################	
+				##################################################################
+
 			return render(request,"content_detail.html",context)
 	
 	# object type is 'text'
@@ -1408,7 +1423,7 @@ def top_star_list(request):
 	ids_already_fanned = filter_following(trender_ids,own_id)
 	trender_credential_dict = retrieve_bulk_credentials(trender_ids,decode_unames=False)
 	trender_ids = map(int,trender_ids)
-
+	
 	for trender_id in trender_ids:
 		username = trender_credential_dict[trender_id]['uname']
 		av_url = trender_credential_dict[trender_id]['avurl']
@@ -1803,6 +1818,13 @@ def photo_page(request,list_type='best-list'):
 			context['parent_obj_id_rep_sent_to'] = request.session.pop("dir_rep_tgt_obj_id"+str(own_id),None)
 			if newbie_flag:
 				context["newbie_tutorial_page"] = 'tutorial3.html'# hardcoding to tutorial 3
+
+		else:
+			# supporting images that have been indexed by search engines (but hidden by the op)
+			context["orp_img_file"] = request.session.pop('image_file','')
+			context["orp_img_cap"] = request.session.pop('image_caption','')
+			context["orp_img_alt_txt"] = request.session.pop('alt_text','')
+			context["orp_img_ratio"] = request.session.pop('img_ratio','100')
 
 		return render(request,"photos_page.html",context)
 	else:
