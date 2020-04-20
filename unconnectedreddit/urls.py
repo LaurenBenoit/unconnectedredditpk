@@ -37,7 +37,7 @@ from links.redirection_views import redirect_to_content, main_navbar
 from links.number_verification import verify_user_number
 from links.voting_views import user_vote_history, user_old_vote_history
 from links.announcement_views import export_survey_results, benefits_of_data_mode, corona_virus, corona_virus_management, \
-video_announcement, share_video, video_submitted, youtube_uploading_help#, survey
+video_submitted, export_video_submissions#, video_announcement, share_video, youtube_uploading_help#, survey
 
 admin.autodiscover()
 
@@ -167,10 +167,11 @@ urlpatterns = patterns('',
 	########################################## Survey Related ########################################
 	# url(r'^survey/answers/$', auth(survey),name='survey'),
 	url(r'^survey/export/$', auth(export_survey_results), name='export_survey_results'),
-	url(r'^announcement/videos/$', auth(video_announcement), name='video_announcement'),
-	url(r'^share/video/$', auth(share_video), name='share_video'),
-	url(r'^share/video/help/$', auth(youtube_uploading_help), name='youtube_uploading_help'),
+	# url(r'^announcement/videos/$', auth(video_announcement), name='video_announcement'),
+	# url(r'^share/video/$', auth(share_video), name='share_video'),
+	# url(r'^share/video/help/$', auth(youtube_uploading_help), name='youtube_uploading_help'),
 	url(r'^share/video-submitted/$', auth(video_submitted), name='video_submitted'),
+	url(r'^export/video-submissions/$', auth(export_video_submissions), name='export_video_submissions'),
 	url(r'^corona-virus/$', corona_virus, name='corona_virus'),
 	url(r'^corona-virus/(?P<lang>[\w.@+-]+)/$', corona_virus, name='corona_virus'),
 	url(r'^surviving-corona/$', corona_virus_management, name='corona_virus_management'),

@@ -8,7 +8,8 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.cache import cache_control
 from django.views.decorators.debug import sensitive_post_parameters
 from forms import strip_zero_width_characters
-from redis4 import log_superhuman_survey_answers, has_already_answered_superhuman_survey, retrieve_uname, retrieve_survey_records
+from redis4 import log_superhuman_survey_answers, has_already_answered_superhuman_survey, retrieve_uname, retrieve_survey_records,\
+retrieve_competition_submissions
 from redis7 import in_defenders, get_num_topics
 from redis3 import get_world_age, exact_date
 from redis2 import get_all_follower_count
@@ -776,6 +777,36 @@ def youtube_uploading_help(request):
 	Detailed help page for people who want to know more about uploading a video on youtube, making it unlisted, etc
 	"""
 	return render(request,"announcement/youtube_uploading_help.html",{})
+
+
+def export_video_submissions(request):
+	"""
+	Export submissions into a CSV for viewing
+	"""
+	own_id = request.user.id
+	is_defender, is_super_defender = in_defenders(own_id, return_super_status=True)
+	if is_super_defender:
+		data_to_write_to_csv = retrieve_competition_submissions(round_num=COMPETITION_ROUND)# list of lists (where each list is a list of dictionaries)
+		if data_to_write_to_csv:
+			import csv
+			filename = 'competition_round_{}_submissions.csv'.format(COMPETITION_ROUND)
+			with open(filename,'wb') as f:
+				wtr = csv.writer(f)
+				columns = ['User ID','Username','Submission Time','Raw Submission','Mobile Number','Is Youtube',\
+				'YouTube URL','Channel Name','Passed','Partially Passed','Rejected','Checked By','Remarks']
+
+				wtr.writerow(columns)
+				for data in data_to_write_to_csv:
+					user_id = data.get('user_id',None)
+					epoch_submission_time = data.get('t',None)
+					submission_time = exact_date(float(epoch_submission_time)) if epoch_submission_time else ''
+					raw_video_url = unicode(data['raw_vurl'], "utf-8")
+					youtube_video_id = data.get('yt_video_id','').encode('utf-8')
+					youtube_url = 'https://www.youtube.com/watch?v={}'.format(youtube_video_id) if youtube_video_id else ''
+					to_write = [user_id, retrieve_uname(user_id,decode=True).encode('utf-8'),submission_time, raw_video_url.encode('utf-8'),\
+					data.get('mob_num',''),data.get('is_youtube','0'),youtube_url,'','','','','','']
+					wtr.writerows([to_write])
+	raise Http404("Completed ;)")
 
 
 ###################################### FBS to Data Mode ######################################

@@ -89,6 +89,7 @@ pdim:<photo_id> key that temporarily caches a shared photo's width and height
 POOL = redis.ConnectionPool(connection_class=redis.UnixDomainSocketConnection, path=REDLOC4, db=0)
 
 THREE_MONTHS = 3*30*24*60*60
+ONE_MONTH = 30*24*60*60
 TWO_WEEKS = 60*60*24*7*2
 THREE_DAYS = 60*60*24*3
 ONE_DAY = 60*60*24
@@ -482,7 +483,7 @@ def get_cached_photo_dim(photo_id):
 	"""
 	key = 'pdim:'+photo_id
 	my_server = redis.Redis(connection_pool=POOL)
-	my_server.expire(key,TWO_WEEKS)#extending life of cache
+	my_server.expire(key,ONE_MONTH)#extending life of cache
 	return my_server.hmget(key,'h','w')
 
 
@@ -493,7 +494,7 @@ def cache_photo_dim(photo_id,img_height,img_width):
 	key ='pdim:'+photo_id
 	my_server = redis.Redis(connection_pool=POOL)
 	my_server.hmset(key,{'h':img_height,'w':img_width})
-	my_server.expire(key,TWO_WEEKS)
+	my_server.expire(key,ONE_MONTH)
 
 
 # def retrieve_photo_data(photo_ids, owner_id):
@@ -2295,8 +2296,6 @@ def retrieve_1on1_type():
 
 from get_meta_data import extract_yt_id
 
-ONE_MONTH = 30*24*60*60
-
 YT_VID = 'ytvid:'# key used to 'lock' a particular youtube video from being submitted twice
 PARTICIPANT_MOB_NUM = 'pmn:'# key used to 'lock' a particular mobile number from being submitted twice
 
@@ -2373,3 +2372,16 @@ def	check_participant_mob_num(mob_num, participant_id):
 	else:
 		# unused previously. 
 		return False
+
+
+def retrieve_competition_submissions(round_num):
+	"""
+	Returns submitted competition data, readying it for CSV export
+	"""
+	my_server = redis.Redis(connection_pool=POOL)
+	all_participant_ids = my_server.zrange(PARTICIPANT_LIST+round_num,0,-1)
+	
+	pipeline1 = my_server.pipeline()
+	for participant_id in all_participant_ids:
+		pipeline1.hgetall(PARTICIPANT_HASH+round_num+':'+participant_id)
+	return pipeline1.execute()

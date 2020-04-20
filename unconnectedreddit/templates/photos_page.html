@@ -11,6 +11,13 @@
 	{% load get_inline_replies_section %}
 	{% load get_big_photo_comment_button %}
 
+	<!-- indexed but unavailable -->
+	{% if orp_img_file %}
+		{% load s3 %}
+		{% include "orphaned_image.html" with image_url=orp_img_file|s3 image_caption=orp_img_cap|emoticons alt_text=orp_img_alt_txt ratio=orp_img_ratio %}
+	{% endif %}
+	<!--  -->
+
 	{% if newbie_flag %}
 		{% if feed_type == 'fresh_photos' %}
 			{% include newbie_tutorial_page with static_url=STATIC_URL lang=newbie_lang origin=page_origin state='with_buttons' %}
@@ -63,10 +70,12 @@
 	    <button id="dir_rep_subform" class="btn bm bct mrl pg_ok_res sp" style="border-radius:0;border-bottom-right-radius:5px;border-bottom-left-radius:5px;width:100%;height:40px" name="dec" value="1" type="submit"><b>SEND</b></button>
 	</form>
 
+
 	<a name="error"></a>
 	{% if dir_rep_invalid %}
 		<div style="background: rgb(255,121,0);background: -moz-linear-gradient(90deg, rgba(255,121,0,1) 1%, rgba(255,0,0,1) 100%);background: -webkit-linear-gradient(90deg, rgba(255,121,0,1) 1%, rgba(255,0,0,1) 100%);background: linear-gradient(90deg, rgba(255,121,0,1) 1%, rgba(255,0,0,1) 100%);text-align:center;color:white;padding:5px;border-radius:7px;border:2px solid whitesmoke" class="cxl lsp mbs">{{ dir_rep_invalid }}</div>
 	{% endif %}
+
 
 	{% for photo in object_list %}
 	
